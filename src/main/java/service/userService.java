@@ -10,9 +10,12 @@ import java.util.List;
 
 public class userService {
     private final userRepository userRepository;
+    private final EmailService emailService; // ✅ أضفنا EmailService
 
-    public userService(userRepository userRepository) {
+    // ✅ عدلنا الكونستركتور ليستقبل EmailService
+    public userService(userRepository userRepository, EmailService emailService) {
         this.userRepository = userRepository;
+        this.emailService = emailService;
     }
 
     public boolean registerUser(String email, String password, String confirmPassword) {
@@ -26,7 +29,24 @@ public class userService {
 
         String hashedPassword = PasswordHasher.hashPassword(password);
         user user = new user(email, Role.STUDENT, hashedPassword);
-        return userRepository.save(user);
+
+        boolean saved = userRepository.save(user);
+
+        // ✅ إذا انحفظ بنجاح، نبعت إيميل ترحيب
+        if (saved) {
+            String subject = "Welcome to the Library System";
+            String text = """
+                    Hello %s,
+                    
+                    Your account has been created successfully in the Library System.
+                    
+                    Happy reading! 📚
+                    """.formatted(email);
+
+            emailService.sendEmail(email, subject, text);
+        }
+
+        return saved;
     }
 
     public user authenticate(String email, String password) {
