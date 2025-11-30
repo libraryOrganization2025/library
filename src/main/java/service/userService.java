@@ -10,9 +10,8 @@ import java.util.List;
 
 public class userService {
     private final userRepository userRepository;
-    private final EmailService emailService; // ✅ أضفنا EmailService
+    private final EmailService emailService;
 
-    // ✅ عدلنا الكونستركتور ليستقبل EmailService
     public userService(userRepository userRepository, EmailService emailService) {
         this.userRepository = userRepository;
         this.emailService = emailService;
@@ -32,7 +31,6 @@ public class userService {
 
         boolean saved = userRepository.save(user);
 
-        // ✅ إذا انحفظ بنجاح، نبعت إيميل ترحيب
         if (saved) {
             String subject = "Welcome to the Library System";
             String text = """
