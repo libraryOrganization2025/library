@@ -38,7 +38,7 @@ public class userService {
                     
                     Your account has been created successfully in the Library System.
                     
-                    Happy reading! 📚
+                    Enjoy your journey! 📚
                     """.formatted(email);
 
             emailService.sendEmail(email, subject, text);
