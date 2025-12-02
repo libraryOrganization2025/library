@@ -23,6 +23,12 @@ public class BorrowRepository {
         WHERE isbn = ? AND quantity > 0
     """;
 
+        String updateUserLastBorrowSql = """
+        UPDATE users
+        SET lastdateborrowed = ?
+        WHERE email = ?
+    """;
+
         try (Connection conn = DatabaseConnection.getConnection()) {
 
             // Start transaction
@@ -50,6 +56,12 @@ public class BorrowRepository {
                 }
             }
 
+            try (PreparedStatement stmt3 = conn.prepareStatement(updateUserLastBorrowSql)) {
+                stmt3.setDate(1, Date.valueOf(borrow.getBorrowDate())); // أو Date.valueOf(LocalDate.now())
+                stmt3.setString(2, borrow.getStudentEmail());
+                stmt3.executeUpdate();
+            }
+
             // Commit both operations
             conn.commit();
             return true;
@@ -67,17 +79,17 @@ public class BorrowRepository {
         try (Connection conn = DatabaseConnection.getConnection();
 
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            /*System.out.println("URL  = " + conn.getMetaData().getURL());
-            System.out.println("USER = " + conn.getMetaData().getUserName());*/
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
                 list.add(new Borrow(
+                        rs.getInt("id"),
                         rs.getString("student_email"),
                         rs.getInt("item_isbn"),
                         rs.getDate("borrow_date").toLocalDate(),
                         rs.getDate("overdue_date").toLocalDate(),
-                        rs.getBoolean("returned")
+                        rs.getBoolean("returned"),
+                        rs.getInt("fine")
                 ));
             }
 
