@@ -28,6 +28,11 @@ public class user {
         this.deletedOn = deletedOn;
     }
 
+    public user(String mail, Role role) {
+        this.email = mail;
+        this.role = role;
+    }
+
     // Getters and setters
     public String getEmail() { return email; }
     public Role getRole() { return role; }

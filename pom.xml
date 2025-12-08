@@ -14,14 +14,14 @@
             <artifactId>postgresql</artifactId>
             <version>42.7.3</version> <!-- use latest stable version -->
         </dependency>
-        <!-- Jakarta Mail لإرسال الإيميلات -->
+
         <dependency>
             <groupId>com.sun.mail</groupId>
             <artifactId>jakarta.mail</artifactId>
             <version>2.0.1</version>
         </dependency>
 
-        <!-- dotenv-java لقراءة ملف .env -->
+
         <dependency>
             <groupId>io.github.cdimascio</groupId>
             <artifactId>dotenv-java</artifactId>
@@ -57,15 +57,27 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.14</version>
+
                 <executions>
+                    <!-- Attach Jacoco Java Agent BEFORE tests -->
                     <execution>
+                        <id>prepare-agent</id>
                         <goals>
                             <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+
+                    <!-- Generate report AFTER tests -->
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
                             <goal>report</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
     </build>
     <properties>

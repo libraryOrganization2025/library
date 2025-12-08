@@ -8,6 +8,7 @@ import java.util.Scanner;
 
 public class menuService {
     private final Scanner scanner;
+
     private final userService userService;
     private final ItemsService itemsService;
     private final BorrowService borrowService;
@@ -45,7 +46,7 @@ public class menuService {
         }
     }
 
-    private void handleSignUp() {
+    public void handleSignUp() {
         System.out.println("\n--- Sign Up ---");
         System.out.print("Enter email: ");
         String email = scanner.nextLine().trim();
@@ -61,7 +62,7 @@ public class menuService {
         }
     }
 
-    private void handleLogin() {
+    public void handleLogin() {
         System.out.println("\n--- Log In ---");
         System.out.print("Enter email: ");
         String email = scanner.nextLine().trim();
@@ -77,7 +78,7 @@ public class menuService {
         }
     }
 
-    private void showRoleBasedMenu(user user) {
+    public void showRoleBasedMenu(user user) {
         boolean loggedIn = true;
 
         while (loggedIn) {
@@ -94,7 +95,7 @@ public class menuService {
         }
     }
 
-    private boolean showAdminMenu() {
+    public boolean showAdminMenu() {
         System.out.println("\n--- Admin Menu ---");
         System.out.println("1. See Inactive Accounts");
         System.out.println("2. Delete Inactive Account");
@@ -132,7 +133,7 @@ public class menuService {
         }
     }
 
-    private void deleteInactiveAccount() {
+    void deleteInactiveAccount() {
         System.out.print("\nEnter email of inactive account to delete: ");
         String email = scanner.nextLine().trim();
 
@@ -143,7 +144,7 @@ public class menuService {
             System.out.println("❌ Account not found or not inactive.");
     }
 
-    private void changeUserRole() {
+    void changeUserRole() {
         System.out.print("\nEnter user email: ");
         String email = scanner.nextLine().trim();
 
@@ -173,7 +174,7 @@ public class menuService {
             System.out.println("❌ User not found.");
     }
 
-    private void sendFineReminders() {
+    void sendFineReminders() {
         System.out.println("📧 Sending fine reminder emails...");
 
 
@@ -199,7 +200,7 @@ public class menuService {
     }
 
 
-    private boolean showLibrarianMenu() {
+    boolean showLibrarianMenu() {
         System.out.println("\n--- Librarian Menu ---");
         System.out.println("1. See Overdue users");
         System.out.println("2. Logout");
@@ -227,7 +228,7 @@ public class menuService {
         return true;
     }
 
-    private boolean showStudentMenu(user user) {
+    public boolean showStudentMenu(user user) {
         System.out.println("\n--- Student Menu ---");
         System.out.println("1. Search Book");
         System.out.println("2. Search CD");
@@ -320,7 +321,7 @@ public class menuService {
         return true;
     }
 
-    private void handleAddItem() {
+    public void handleAddItem() {
         System.out.println("\n--- Add Item ---");
 
         System.out.println("Choose type:");
@@ -391,7 +392,7 @@ public class menuService {
         }
     }
 
-    private void handleSearchBook() {
+    public void handleSearchBook() {
         System.out.println("\n--- Search Book ---");
         System.out.println("1. Search by name");
         System.out.println("2. Search by author");
@@ -435,7 +436,7 @@ public class menuService {
         }
     }
 
-    private void handleSearchCD() {
+    public void handleSearchCD() {
         System.out.println("\n--- Search CD ---");
         System.out.println("1. Search by name");
         System.out.println("2. Search by author");
@@ -504,7 +505,7 @@ public class menuService {
         System.out.println("Quantity: " + item.getQuantity());
     }
 
-    private String readPasswordHidden(String prompt) {
+    public String readPasswordHidden(String prompt) {
         Console console = System.console();
         if (console != null) {
             char[] passArray = console.readPassword(prompt);
