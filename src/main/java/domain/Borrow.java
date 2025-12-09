@@ -12,7 +12,7 @@ public class Borrow {
     private boolean returned;
     private int fine;
 
-
+    public Borrow() {}
     public Borrow(String studentEmail, int isbn, LocalDate borrowDate, LocalDate overdueDate, boolean returned) {
         this(null, studentEmail, isbn, borrowDate, overdueDate, returned, 0);
     }
