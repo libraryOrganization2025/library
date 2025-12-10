@@ -6,12 +6,31 @@ import jakarta.mail.internet.MimeMessage;
 
 import java.util.Properties;
 
+/**
+ * Service class responsible for sending emails via SMTP using Gmail.
+ * <p>
+ * Configures a mail {@link Session} with authentication and TLS security.
+ * Provides a method to send plain text emails to a specified recipient.
+ * </p>
+ *
+ * @author Sara
+ * @version 1.0
+ */
 public class EmailService {
 
     private final String username;
     private final String password;
     private final Session session;
 
+    /**
+     * Constructs an {@link EmailService} with the given Gmail credentials.
+     * <p>
+     * Sets up the SMTP session with authentication and TLS.
+     * </p>
+     *
+     * @param username the Gmail email address used as sender
+     * @param password the app-specific password or Gmail password
+     */
     public EmailService(String username, String password) {
         this.username = username;
         this.password = password;
@@ -32,6 +51,14 @@ public class EmailService {
         });
     }
 
+    /**
+     * Sends a plain text email to a specified recipient.
+     *
+     * @param to the recipient's email address
+     * @param subject the subject line of the email
+     * @param text the body text of the email
+     * @throws MessagingException if an error occurs while sending the email
+     */
     public void sendEmail(String to, String subject, String text) {
         try {
             Message message = new MimeMessage(session);

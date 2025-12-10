@@ -10,7 +10,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Repository responsible for managing {@link user} entities in the database.
+ * <p>
+ * Provides CRUD operations, role updates, and management of inactive users.
+ * All database interactions are handled via JDBC using {@link DatabaseConnection}.
+ * </p>
+ *
+ * @author  Sara
+ * @version 1.0
+ */
 public class userRepository {
+
+    /**
+     * Persists a new user record into the database.
+     *
+     * @param user the {@link user} object to save
+     * @return {@code true} if the user was successfully inserted; {@code false} otherwise
+     * @throws RuntimeException if a non-SQL exception occurs during database operation
+     */
     public boolean save(user user) {
         String sql = "INSERT INTO users (email, role, password_hash) VALUES (?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -30,6 +48,12 @@ public class userRepository {
         }
     }
 
+    /**
+     * Retrieves a user by their email address.
+     *
+     * @param email the email of the user to retrieve
+     * @return an {@link Optional} containing the {@link user} if found, or empty if no user exists with the given email
+     */
     public Optional<user> findByEmail(String email) {
         String sql = "SELECT * FROM users WHERE email = ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -52,6 +76,20 @@ public class userRepository {
         return Optional.empty();
     }
 
+    /**
+     * Finds all users who have been inactive since a specified date.
+     * <p>
+     * A user is considered inactive if:
+     * <ul>
+     *     <li>They have never borrowed any items and were created before {@code oneYearAgo}, or</li>
+     *     <li>Their last borrowed date is before {@code oneYearAgo}.</li>
+     * </ul>
+     * Users marked as deleted ({@code deletedOn} is not null) are ignored.
+     * </p>
+     *
+     * @param oneYearAgo the date threshold to determine inactivity
+     * @return a {@link List} of inactive {@link user} objects
+     */
     public List<user> findInactiveUsersSince(LocalDate oneYearAgo) {
         List<user> users = new ArrayList<>();
 
@@ -88,6 +126,16 @@ public class userRepository {
         return users;
     }
 
+    /**
+     * Soft deletes a user by setting their {@code deletedOn} timestamp.
+     * <p>
+     * Only users who are inactive since {@code oneYearAgo} and not already deleted are affected.
+     * </p>
+     *
+     * @param email the email of the user to soft delete
+     * @param oneYearAgo the date threshold for inactivity
+     * @return {@code true} if a user was successfully marked as deleted; {@code false} otherwise
+     */
     public boolean softDeleteInactiveUser(String email, LocalDate oneYearAgo) {
         String sql = """
                 UPDATE users
@@ -117,6 +165,13 @@ public class userRepository {
         return false;
     }
 
+    /**
+     * Updates the role of an existing user.
+     *
+     * @param email the email of the user whose role is to be updated
+     * @param newRole the new {@link Role} to assign to the user
+     * @return {@code true} if the role was successfully updated; {@code false} otherwise
+     */
     public boolean updateRole(String email, Role newRole) {
         String sql = "UPDATE users SET role = ? WHERE email = ?";
 

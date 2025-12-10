@@ -8,30 +8,61 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Repository responsible for handling all database operations related to borrowing items.
+ * <p>
+ * This class manages:
+ * <ul>
+ *     <li>Borrowing items</li>
+ *     <li>Returning items</li>
+ *     <li>Updating fines</li>
+ *     <li>Finding overdue borrow records</li>
+ *     <li>Fetching active borrow rows</li>
+ *     <li>Listing users with unpaid fines</li>
+ * </ul>
+ *
+ * All database operations are executed using JDBC via {@link DatabaseConnection}.
+ *
+ * @author Shatha , Sara
+ * @version 1.0
+ */
 public class BorrowRepository {
 
+    /**
+     * Saves a new borrow record and decreases item quantity.
+     * <p>
+     * The method runs as a transaction:
+     * <ol>
+     *     <li>Insert a borrow row</li>
+     *     <li>Reduce item quantity by 1</li>
+     *     <li>Update user's last borrow date</li>
+     *     <li>Commit if all succeed, otherwise rollback</li>
+     * </ol>
+     *
+     * @param borrow the borrow object containing student email, ISBN, and borrow dates
+     * @return true if the operation completed successfully, false if item is out of stock or an error occurred
+     */
     public boolean borrowItem(Borrow borrow) {
 
         String insertSql = """
-        INSERT INTO student_borrow (student_email, item_isbn, borrow_date, overdue_date, returned)
-        VALUES (?, ?, ?, ?, false)
-    """;
+            INSERT INTO student_borrow (student_email, item_isbn, borrow_date, overdue_date, returned)
+            VALUES (?, ?, ?, ?, false)
+        """;
 
         String updateQuantitySql = """
-        UPDATE items
-        SET quantity = quantity - 1
-        WHERE isbn = ? AND quantity > 0
-    """;
+            UPDATE items
+            SET quantity = quantity - 1
+            WHERE isbn = ? AND quantity > 0
+        """;
 
         String updateUserLastBorrowSql = """
-        UPDATE users
-        SET lastdateborrowed = ?
-        WHERE email = ?
-    """;
+            UPDATE users
+            SET lastdateborrowed = ?
+            WHERE email = ?
+        """;
 
         try (Connection conn = DatabaseConnection.getConnection()) {
 
-            // Start transaction
             conn.setAutoCommit(false);
 
             // 1. Insert borrow record
@@ -49,20 +80,18 @@ public class BorrowRepository {
                 int rowsUpdated = stmt2.executeUpdate();
 
                 if (rowsUpdated == 0) {
-                    // Quantity was already 0 → rollback
                     conn.rollback();
-                    System.out.println("Item out of stock");
                     return false;
                 }
             }
 
+            // 3. Update user's last borrow date
             try (PreparedStatement stmt3 = conn.prepareStatement(updateUserLastBorrowSql)) {
-                stmt3.setDate(1, Date.valueOf(borrow.getBorrowDate())); // أو Date.valueOf(LocalDate.now())
+                stmt3.setDate(1, Date.valueOf(borrow.getBorrowDate()));
                 stmt3.setString(2, borrow.getStudentEmail());
                 stmt3.executeUpdate();
             }
 
-            // Commit both operations
             conn.commit();
             return true;
 
@@ -72,13 +101,18 @@ public class BorrowRepository {
         }
     }
 
+    /**
+     * Retrieves a list of all users who have overdue and unreturned items.
+     *
+     * @return a list of {@link Borrow} objects representing overdue borrow records
+     */
     public List<Borrow> getOverdueUsers() {
         String sql = "SELECT * FROM student_borrow WHERE overdue_date < CURRENT_DATE AND returned = false";
         List<Borrow> list = new ArrayList<>();
 
         try (Connection conn = DatabaseConnection.getConnection();
-
              PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
@@ -99,23 +133,34 @@ public class BorrowRepository {
         return list;
     }
 
+    /**
+     * Marks an item as returned and increases its quantity.
+     * <p>
+     * The operation runs in a transaction:
+     * <ul>
+     *     <li>Update returned = true</li>
+     *     <li>Increase item quantity by 1</li>
+     * </ul>
+     *
+     * @param returned the borrow object containing student email and ISBN
+     * @return true if completed successfully, false otherwise
+     */
     public boolean returnItem(Borrow returned) {
 
         String updateReturnedSql = """
-        UPDATE student_borrow
-        SET returned = True
-        WHERE item_isbn = ? AND student_email = ?
-    """;
+            UPDATE student_borrow
+            SET returned = True
+            WHERE item_isbn = ? AND student_email = ?
+        """;
 
         String updateQuantitySql = """
-        UPDATE items
-        SET quantity = quantity + 1
-        WHERE isbn = ? AND quantity > 0
-    """;
+            UPDATE items
+            SET quantity = quantity + 1
+            WHERE isbn = ? AND quantity > 0
+        """;
 
         try (Connection conn = DatabaseConnection.getConnection()) {
 
-            // Start transaction
             conn.setAutoCommit(false);
 
             try (PreparedStatement stmt = conn.prepareStatement(updateReturnedSql)) {
@@ -126,11 +171,9 @@ public class BorrowRepository {
 
             try (PreparedStatement stmt2 = conn.prepareStatement(updateQuantitySql)) {
                 stmt2.setInt(1, returned.getIsbn());
-                int rowsUpdated = stmt2.executeUpdate();
-
+                stmt2.executeUpdate();
             }
 
-            // Commit both operations
             conn.commit();
             return true;
 
@@ -140,6 +183,15 @@ public class BorrowRepository {
         }
     }
 
+    /**
+     * Updates a user's fine after they make a payment.
+     * <p>
+     * The payment is applied in order of the oldest fine first (ascending by record ID).
+     * Partial payments are supported.
+     *
+     * @param email       the student's email
+     * @param paidAmount  the amount the student paid
+     */
     public void updateFineAfterPayment(String email, int paidAmount) {
         String selectSql = "SELECT id, fine FROM student_borrow WHERE student_email = ? AND fine > 0 ORDER BY id ASC";
         String updateSql = "UPDATE student_borrow SET fine = ? WHERE id = ?";
@@ -159,13 +211,11 @@ public class BorrowRepository {
                         int rowFine = rs.getInt("fine");
 
                         if (remaining >= rowFine) {
-                            // pay full rowFine
                             update.setInt(1, 0);
                             update.setInt(2, id);
                             update.executeUpdate();
                             remaining -= rowFine;
                         } else {
-                            // partial payment for this row
                             update.setInt(1, rowFine - remaining);
                             update.setInt(2, id);
                             update.executeUpdate();
@@ -181,19 +231,37 @@ public class BorrowRepository {
         }
     }
 
+    /**
+     * Calculates the total unpaid fines for a user.
+     *
+     * @param email student's email
+     * @return total fine amount, or 0 if none or an error occurred
+     */
     public int getTotalFine(String email) {
         String sql = "SELECT SUM(fine) AS total FROM student_borrow WHERE student_email = ? AND fine > 0";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
+
             if (rs.next()) return rs.getInt("total");
+
         } catch (Exception e) {
             System.out.println("Error checking fine: " + e.getMessage());
         }
         return 0;
     }
 
+    /**
+     * Marks a specific borrow record (based on student and ISBN) as returned
+     * and sets a final fine amount.
+     *
+     * @param email      the student's email
+     * @param isbn       the item ISBN
+     * @param fineToSet  the computed fine to assign to this borrow record
+     * @return true if a record was found and updated, false otherwise
+     */
     public boolean markReturnedByStudentAndIsbn(String email, int isbn, int fineToSet) {
         String findSql = "SELECT id FROM student_borrow WHERE student_email = ? AND item_isbn = ? AND returned = false ORDER BY borrow_date DESC LIMIT 1";
         String updateSql = "UPDATE student_borrow SET returned = true, fine = ? WHERE id = ?";
@@ -206,7 +274,7 @@ public class BorrowRepository {
             ResultSet rs = find.executeQuery();
 
             if (!rs.next()) {
-                return false; // no active borrow found
+                return false;
             }
 
             int id = rs.getInt("id");
@@ -224,16 +292,24 @@ public class BorrowRepository {
         }
     }
 
-    // Get the most recent active borrow row for a student/isbn (to compute overdueDays etc.)
+    /**
+     * Finds the most recent active (not returned) borrow record for a student and item.
+     *
+     * @param email student's email
+     * @param isbn  item ISBN
+     * @return a {@link Borrow} object if found, otherwise null
+     */
     public Borrow findActiveBorrow(String email, int isbn) {
-        String sql = "SELECT id, student_email, item_isbn, borrow_date, overdue_date, returned, fine " +
-                "FROM student_borrow WHERE student_email = ? AND item_isbn = ? AND returned = false ORDER BY borrow_date DESC LIMIT 1";
+        String sql = "SELECT id, student_email, item_isbn, borrow_date, overdue_date, returned, fine "
+                + "FROM student_borrow WHERE student_email = ? AND item_isbn = ? AND returned = false "
+                + "ORDER BY borrow_date DESC LIMIT 1";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, email);
             stmt.setInt(2, isbn);
+
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
@@ -254,6 +330,11 @@ public class BorrowRepository {
         return null;
     }
 
+    /**
+     * Retrieves a list of all students who currently have unpaid fines.
+     *
+     * @return a list of email addresses
+     */
     public List<String> getStudentsWithUnpaidFines() {
         String sql = "SELECT DISTINCT student_email FROM student_borrow WHERE fine > 0";
         List<String> emails = new ArrayList<>();
@@ -272,5 +353,4 @@ public class BorrowRepository {
 
         return emails;
     }
-
 }
