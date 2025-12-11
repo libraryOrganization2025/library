@@ -78,18 +78,20 @@ public class userRepository {
 
     /**
      * Finds all users who have been inactive since a specified date.
-     * <p>
-     * A user is considered inactive if:
+     *
+     * <p>A user is considered inactive if:</p>
+     *
      * <ul>
-     *     <li>They have never borrowed any items and were created before {@code oneYearAgo}, or</li>
+     *     <li>They have never borrowed any items and were created before {@code oneYearAgo}.</li>
      *     <li>Their last borrowed date is before {@code oneYearAgo}.</li>
      * </ul>
-     * Users marked as deleted ({@code deletedOn} is not null) are ignored.
-     * </p>
+     *
+     * <p>Users marked as deleted ({@code deletedOn} is not null) are ignored.</p>
      *
      * @param oneYearAgo the date threshold to determine inactivity
      * @return a {@link List} of inactive {@link user} objects
      */
+
     public List<user> findInactiveUsersSince(LocalDate oneYearAgo) {
         List<user> users = new ArrayList<>();
 

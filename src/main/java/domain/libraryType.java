@@ -44,6 +44,7 @@ public enum libraryType {
     }
 
     /**
+     * return the unique type ID
      * @return the unique type ID
      */
     public int getType() {

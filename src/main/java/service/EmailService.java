@@ -57,7 +57,6 @@ public class EmailService {
      * @param to the recipient's email address
      * @param subject the subject line of the email
      * @param text the body text of the email
-     * @throws MessagingException if an error occurs while sending the email
      */
     public void sendEmail(String to, String subject, String text) {
         try {

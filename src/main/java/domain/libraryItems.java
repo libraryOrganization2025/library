@@ -10,26 +10,31 @@ package domain;
 public interface libraryItems {
 
     /**
+     * return the author of the item
      * @return the author of the item
      */
     String getAuthor();
 
     /**
+     * return the name or title of the item
      * @return the name or title of the item
      */
     String getName();
 
     /**
+     * return the type of the item (Book, CD, etc.)
      * @return the type of the item (Book, CD, etc.)
      */
     libraryType getType();
 
     /**
+     * return the available quantity
      * @return the available quantity
      */
     int getQuantity();
 
     /**
+     * return the item's ISBN
      * @return the item's ISBN
      */
     String getISBN();

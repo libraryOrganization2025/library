@@ -76,36 +76,43 @@ public class Borrow {
     }
 
     /**
+     * return the unique borrow record ID
      * @return the unique borrow record ID
      */
     public Integer getId() { return id; }
 
     /**
+     * return the email of the student
      * @return the email of the student
      */
     public String getStudentEmail() { return studentEmail; }
 
     /**
+     * return the ISBN of the borrowed item
      * @return the ISBN of the borrowed item
      */
     public int getIsbn() { return isbn; }
 
     /**
+     * return the borrow date
      * @return the borrow date
      */
     public LocalDate getBorrowDate() { return borrowDate; }
 
     /**
+     * return the overdue date
      * @return the overdue date
      */
     public LocalDate getOverdueDate() { return overdueDate; }
 
     /**
+     * return true if the item has been returned, false otherwise
      * @return true if the item has been returned, false otherwise
      */
     public boolean isReturned() { return returned; }
 
     /**
+     * return the fine amount
      * @return the fine amount
      */
     public int getFine() { return fine; }
