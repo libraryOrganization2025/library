@@ -24,11 +24,6 @@
 
         <!-- PostgreSQL -->
         <dependency>
-            <groupId>org.sonarsource.scanner.maven</groupId>
-            <artifactId>sonar-maven-plugin</artifactId>
-            <version>5.5.0.6356</version>
-        </dependency>
-        <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>42.7.3</version>
@@ -89,14 +84,17 @@
                 <artifactId>sonar-maven-plugin</artifactId>
                 <version>3.11.0.3922</version> <!-- Use the latest version from Maven Central -->
             </plugin>
-
-            <!-- Maven Surefire (runs JUnit 5 tests) -->
             <plugin>
-                <groupId>org.sonarsource.scanner.maven</groupId>
-                <artifactId>sonar-maven-plugin</artifactId>
-                <version>3.11.0.3922</version> <!-- Use the latest version from Maven Central -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version> <!-- newer version supports JDK 23 -->
+                <configuration>
+                    <source>23</source>
+                    <target>23</target>
+                </configuration>
             </plugin>
 
+            <!-- Maven Surefire (runs JUnit 5 tests) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
