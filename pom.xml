@@ -91,7 +91,6 @@
             </plugin>
 
             <!-- Maven Surefire (runs JUnit 5 tests) -->
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
