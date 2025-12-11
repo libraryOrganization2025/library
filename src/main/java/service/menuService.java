@@ -122,6 +122,12 @@ public class menuService {
      * @return
      */
     public boolean showRoleBasedMenu(user user) {
+        if (user == null || user.getRole() == null) {
+            // Handle unknown or null role gracefully
+            System.out.println("❌ Unknown role.");
+            return false;
+        }
+
         boolean loggedIn = true;
 
         while (loggedIn) {
@@ -136,8 +142,10 @@ public class menuService {
                 }
             }
         }
+
         return loggedIn;
     }
+
 
     /**
      * Shows the admin menu and handles admin-specific actions.
