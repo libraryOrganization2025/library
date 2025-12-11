@@ -87,10 +87,14 @@
         </plugins>
     </build>
     <properties>
-         <sonar.organization>libraryorganization2025</sonar.organization>
-        <maven.compiler.source>23</maven.compiler.source>
-        <maven.compiler.target>23</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <!-- SonarCloud settings -->
+    <sonar.projectKey>libraryOrganization2025_library</sonar.projectKey>
+    <sonar.organization>libraryorganization2025</sonar.organization>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+</properties>
 
 </project>
