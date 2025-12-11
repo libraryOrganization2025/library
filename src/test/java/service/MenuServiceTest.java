@@ -360,7 +360,7 @@ class MenuServiceTest {
         menuService menuPartial = createMenu("5\n5\n");
         when(mockBorrowService.getTotalFine("student@test.com")).thenReturn(10, 5); // before and after
         doNothing().when(mockBorrowService).payFine("student@test.com", 5);
-        menuPartial.showStudentMenu(mockUser);
+        menuPartial.showStudentMenu(mockUser); 
         assertTrue(outContent.toString().contains("Payment successful"));
         assertTrue(outContent.toString().contains("You still cannot borrow/return until full fine is paid"));
     }
