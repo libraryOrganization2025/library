@@ -91,11 +91,6 @@
             </plugin>
 
             <!-- Maven Surefire (runs JUnit 5 tests) -->
-            <plugin>
-                <groupId>org.sonarsource.scanner.maven</groupId>
-                <artifactId>sonar-maven-plugin</artifactId>
-                <version>3.11.0.3922</version> <!-- Use the latest version from Maven Central -->
-            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
