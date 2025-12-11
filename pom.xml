@@ -59,13 +59,14 @@
             <scope>test</scope>
         </dependency>
 
-        <!--        &lt;!&ndash; Mockito Inline (mock final classes, optional) &ndash;&gt;-->
-        <!--        <dependency>-->
-        <!--            <groupId>org.mockito</groupId>-->
-        <!--            <artifactId>mockito-inline</artifactId>-->
-        <!--            <version>5.11.0</version>-->
-        <!--            <scope>test</scope>-->
-        <!--        </dependency>-->
+                <!-- Mockito Inline (mock final classes, optional) -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-inline</artifactId>
+            <version>5.2.0</version> <!-- use a version present on Central -->
+            <scope>test</scope>
+        </dependency>
+
 
         <!-- Mockito + JUnit 5 Extension -->
         <dependency>
