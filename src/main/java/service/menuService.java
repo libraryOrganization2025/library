@@ -119,8 +119,9 @@ public class menuService {
      * Displays a menu based on the user's role and handles role-specific options.
      *
      * @param user the authenticated user
+     * @return
      */
-    public void showRoleBasedMenu(user user) {
+    public boolean showRoleBasedMenu(user user) {
         boolean loggedIn = true;
 
         while (loggedIn) {
@@ -135,6 +136,7 @@ public class menuService {
                 }
             }
         }
+        return loggedIn;
     }
 
     /**
@@ -171,7 +173,7 @@ public class menuService {
     /**
      * Displays a list of inactive user accounts.
      */
-    private void showInactiveAccounts() {
+    void showInactiveAccounts() {
         System.out.println("\n📋 Inactive Accounts:");
         List<user> inactiveUsers = userService.getInactiveUsers();
         if (inactiveUsers.isEmpty()) {
