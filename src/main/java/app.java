@@ -11,21 +11,11 @@ public class app {
     public static void main(String[] args) {
         System.out.println("===== Welcome to the Library System =====");
 
-        Scanner scanner = new Scanner(System.in);
-
-        EmailService emailService = new EmailService(
-                config.EMAIL,
-                config.EMAIL_PASSWORD
-        );
-        userRepository userRepository = new userRepository();
-        userService userService = new userService(userRepository, emailService);
-        ItemsRepository itemsRepository = new ItemsRepository();
-        ItemsService itemsService = new ItemsService(itemsRepository);
-        BorrowRepository borrowRepository = new BorrowRepository();
-        BorrowService borrowService = new BorrowService(borrowRepository , itemsRepository);
-        menuService menuService = new menuService(scanner, userService, itemsService , borrowService , emailService);
+        System.out.println(config.EMAIL + config.EMAIL_PASSWORD);
+        AppConfig _appConfig = new AppConfig(config.EMAIL, config.EMAIL_PASSWORD);
+        menuService menuService = new menuService(_appConfig.scanner, _appConfig.userService, _appConfig.itemsService , _appConfig.borrowService , _appConfig.emailService);
         menuService.showMainMenu();
 
-        scanner.close();
+        _appConfig.scanner.close();
     }
 }
