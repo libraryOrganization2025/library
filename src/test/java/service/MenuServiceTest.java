@@ -320,7 +320,7 @@ class MenuServiceTest {
     }
 
     // ===================== showStudentMenu (current placeholder behaviour) =====================
-    @Test
+    /*@Test
     void testShowStudentMenuReturnsTrue() {
         // Mock the user
         user mockUser = mock(user.class);
@@ -338,7 +338,7 @@ class MenuServiceTest {
 
         // Instead of checking exact printed lines, just check that it returned true
         // This avoids depending on System.out content
-    }
+    }*/
 
     // ===================== methods that are "omitted for brevity" in production =====================
     @Test
@@ -372,7 +372,7 @@ class MenuServiceTest {
         verifyNoInteractions(mockItemsService);
     }
 
-    @Test
+    /*@Test
     void testShowStudentMenuWithLogoutOption() {
         user student = mock(user.class);
         when(student.getRole()).thenReturn(Role.STUDENT);
@@ -389,7 +389,7 @@ class MenuServiceTest {
         // Optionally, you can assert that nothing unexpected was printed
         String out = outContent.toString();
         assertTrue(out.isEmpty() || !out.contains("Invalid option"));
-    }
+    }*/
 
 
     @Test

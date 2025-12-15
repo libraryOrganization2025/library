@@ -307,30 +307,265 @@ public class menuService {
      * @param user the logged-in student
      * @return false if the student chooses to logout, true otherwise
      */
-    public boolean showStudentMenu(user user) {
-        // Implementation omitted for brevity
-        return true; // Placeholder
+    private boolean showStudentMenu(user user) {
+        System.out.println("\n--- Student Menu ---");
+        System.out.println("1. Search Book");
+        System.out.println("2. Search CD");
+        System.out.println("3. Borrow Item");
+        System.out.println("4. Return Item");
+        System.out.println("5. Pay Fine (Partial or Total)");
+        System.out.println("6. Logout");
+        System.out.print("Choose option: ");
+
+        String choice = scanner.nextLine();
+        switch (choice) {
+            case "1" -> handleSearchBook();
+            case "2" -> handleSearchCD();
+            case "3" -> {
+
+
+                try {
+                    if (borrowService.hasUnpaidFine(user.getEmail())) {
+                        System.out.println("❌ You have unpaid fines. Pay before borrowing.");
+                        break;
+                    }
+
+                    System.out.print("Enter ISBN to borrow: ");
+                    int isbn = Integer.parseInt(scanner.nextLine().trim());
+                    boolean ok = borrowService.borrowItem(user.getEmail(), isbn);
+
+                    if (ok) System.out.println("📘 Borrow successful!");
+                    else System.out.println("❌ Could not borrow item.");
+                } catch (NumberFormatException e) {
+                    System.out.println("❌ ISBN must be a number.");
+                } catch (Exception e) {
+                    System.out.println("❌ " + e.getMessage());
+                }
+            }
+            case "4" -> {
+                try {
+                    if (borrowService.hasUnpaidFine(user.getEmail())) {
+                        System.out.println("❌ You have unpaid fines. Pay before returning items.");
+                        break;
+                    }
+
+                    System.out.print("Enter ISBN to return: ");
+                    int isbn = Integer.parseInt(scanner.nextLine().trim());
+
+                    boolean ok = borrowService.returnItem(user.getEmail(), isbn);
+                    if (ok) System.out.println("✅ Item returned successfully.");
+                    else System.out.println("❌ Could not return item (maybe not borrowed).");
+                } catch (NumberFormatException e) {
+                    System.out.println("❌ ISBN must be a number.");
+                } catch (Exception e) {
+                    System.out.println("❌ " + e.getMessage());
+                }
+            }
+            case "5" ->{
+                try {
+                    int totalFine = borrowService.getTotalFine(user.getEmail());
+                    if (totalFine == 0) {
+                        System.out.println("🎉 You have no fines.");
+                        break;
+                    }
+                    System.out.println("Your total fine: " + totalFine + " NIS");
+                    System.out.print("Enter amount to pay: ");
+                    int pay = Integer.parseInt(scanner.nextLine().trim());
+
+                    if (pay <= 0) {
+                        System.out.println("❌ Invalid amount.");
+                        break;
+                    }
+
+                    borrowService.payFine(user.getEmail(), pay);
+
+                    int remaining = borrowService.getTotalFine(user.getEmail());
+                    System.out.println("💰 Payment successful. Remaining fine: " + remaining + " NIS");
+
+                    if (remaining > 0)
+                        System.out.println("⚠️ You still cannot borrow/return until full fine is paid.");
+                } catch (NumberFormatException e) {
+                    System.out.println("❌ Amount must be a number.");
+                } catch (Exception e) {
+                    System.out.println("❌ " + e.getMessage());
+                }
+
+            }
+            case "6" -> {
+                System.out.println("🚪 Logging out...");
+                return false;
+            }
+            default -> System.out.println("❌ Invalid choice.");
+        }
+        return true;
     }
 
     /**
      * Handles adding a new item or increasing quantity for an existing item via {@link ItemsService}.
      */
-    public void handleAddItem() {
-        // Implementation omitted for brevity
+    void handleAddItem() {
+        System.out.println("\n--- Add Item ---");
+
+        System.out.println("Choose type:");
+        System.out.println("1. BOOK");
+        System.out.println("2. CD");
+        System.out.print("Enter choice: ");
+        String t = scanner.nextLine().trim();
+
+        libraryType type = switch (t) {
+            case "1" -> libraryType.Book;
+            case "2" -> libraryType.CD;
+            default -> null;
+        };
+
+        if (type == null) {
+            System.out.println("❌ Invalid type.");
+            return;
+        }
+
+        System.out.println("\nIs this item:");
+        System.out.println("1. Existing (increase quantity)");
+        System.out.println("2. New item");
+        System.out.print("Enter choice: ");
+        String choice = scanner.nextLine().trim();
+
+        try {
+            if ("1".equals(choice)) {
+                System.out.print("Enter ISBN of existing item: ");
+                String isbn = scanner.nextLine().trim();
+
+                Items item = itemsService.searchByISBN(isbn);
+
+                if (item.getType() != type) {
+                    System.out.println("❌ This ISBN belongs to a " + item.getType() + " not a " + type + ".");
+                    return;
+                }
+
+                boolean ok = itemsService.increaseQuantityByISBN(isbn);
+                if (ok)
+                    System.out.println("✅ Quantity increased by 1.");
+                else
+                    System.out.println("❌ Failed to increase quantity.");
+
+            } else if ("2".equals(choice)) {
+                System.out.print("Enter name: ");
+                String name = scanner.nextLine().trim();
+
+                System.out.print("Enter author: ");
+                String author = scanner.nextLine().trim();
+
+                System.out.print("Enter quantity: ");
+                int quantity = Integer.parseInt(scanner.nextLine().trim());
+
+                boolean ok = itemsService.addNewItem(name, author, quantity, type);
+                if (ok)
+                    System.out.println("✅ Item added successfully.");
+                else
+                    System.out.println("❌ Failed to add item.");
+
+            } else {
+                System.out.println("❌ Invalid choice.");
+            }
+
+        } catch (NumberFormatException e) {
+            System.out.println("❌ Quantity must be a number.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("❌ " + e.getMessage());
+        }
     }
 
     /**
      * Handles searching books by name, author, or ISBN via {@link ItemsService}.
      */
-    public void handleSearchBook() {
-        // Implementation omitted for brevity
+    void handleSearchBook() {
+        System.out.println("\n--- Search Book ---");
+        System.out.println("1. Search by name");
+        System.out.println("2. Search by author");
+        System.out.println("3. Search by ISBN");
+        System.out.println("4. Back");
+        System.out.print("Enter choice: ");
+
+        String choice = scanner.nextLine().trim();
+
+        try {
+            switch (choice) {
+                case "1" -> {
+                    System.out.print("Enter book name (or part of it): ");
+                    String name = scanner.nextLine().trim();
+                    List<Items> items = itemsService.searchBooksByName(name);
+                    printItems(items, libraryType.Book);
+                }
+                case "2" -> {
+                    System.out.print("Enter author name (or part of it): ");
+                    String author = scanner.nextLine().trim();
+                    List<Items> items = itemsService.searchBooksByAuthor(author);
+                    printItems(items, libraryType.Book);
+                }
+                case "3" -> {
+                    System.out.print("Enter ISBN (number): ");
+                    String isbn = scanner.nextLine().trim();
+                    Items item = itemsService.searchByISBN(isbn);
+                    if (item.getType() == libraryType.Book) {
+                        printSingleItem(item);
+                    } else {
+                        System.out.println("❌ This ISBN belongs to a CD, not a Book.");
+                    }
+                }
+                case "4" -> {
+                    return;
+                }
+                default -> System.out.println("❌ Invalid choice.");
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println("❌ " + e.getMessage());
+        }
     }
 
     /**
      * Handles searching CDs by name, author, or ISBN via {@link ItemsService}.
      */
-    public void handleSearchCD() {
-        // Implementation omitted for brevity
+    void handleSearchCD() {
+        System.out.println("\n--- Search CD ---");
+        System.out.println("1. Search by name");
+        System.out.println("2. Search by author");
+        System.out.println("3. Search by ISBN");
+        System.out.println("4. Back");
+        System.out.print("Enter choice: ");
+
+        String choice = scanner.nextLine().trim();
+
+        try {
+            switch (choice) {
+                case "1" -> {
+                    System.out.print("Enter CD name (or part of it): ");
+                    String name = scanner.nextLine().trim();
+                    List<Items> items = itemsService.searchCDsByName(name);
+                    printItems(items, libraryType.CD);
+                }
+                case "2" -> {
+                    System.out.print("Enter artist/author (or part of it): ");
+                    String author = scanner.nextLine().trim();
+                    List<Items> items = itemsService.searchCDsByAuthor(author);
+                    printItems(items, libraryType.CD);
+                }
+                case "3" -> {
+                    System.out.print("Enter ISBN (number): ");
+                    String isbn = scanner.nextLine().trim();
+                    Items item = itemsService.searchByISBN(isbn);
+                    if (item.getType() == libraryType.CD) {
+                        printSingleItem(item);
+                    } else {
+                        System.out.println("❌ This ISBN belongs to a Book, not a CD.");
+                    }
+                }
+                case "4" -> {
+                    return;
+                }
+                default -> System.out.println("❌ Invalid choice.");
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println("❌ " + e.getMessage());
+        }
     }
 
     /**
