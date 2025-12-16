@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import repository.UserRepo;
 import repository.userRepository;
 import util.PasswordHasher;
 
@@ -20,8 +21,7 @@ import static org.mockito.Mockito.*;
 class userServiceTest {
 
     @Mock
-    private userRepository userRepository;
-
+    private UserRepo userRepository;
     @Mock
     private EmailService emailService;
 

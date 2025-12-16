@@ -2,6 +2,7 @@ package service;
 
 import domain.Role;
 import domain.user;
+import repository.UserRepo;
 import repository.userRepository;
 import util.PasswordHasher;
 
@@ -21,7 +22,7 @@ import java.util.List;
  */
 public class userService {
 
-    private final userRepository userRepository;
+    private final UserRepo userRepository;
     private final EmailService emailService;
 
     /**
@@ -30,7 +31,7 @@ public class userService {
      * @param userRepository the repository used for user-related operations
      * @param emailService the service used for sending emails
      */
-    public userService(userRepository userRepository, EmailService emailService) {
+    public userService(UserRepo userRepository, EmailService emailService) {
         this.userRepository = userRepository;
         this.emailService = emailService;
     }

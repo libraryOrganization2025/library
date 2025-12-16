@@ -25,7 +25,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 public class userRepositoryTest {
 
-    private userRepository repo;
+    private UserRepo repo; // <-- use the interface
 
     private Connection conn;
     private PreparedStatement stmt;
@@ -35,7 +35,7 @@ public class userRepositoryTest {
 
     @BeforeEach
     void setup() throws Exception {
-        repo = new userRepository();
+        repo = new userRepository(); // <-- use the implementation
 
         conn = mock(Connection.class);
         stmt = mock(PreparedStatement.class);
@@ -53,6 +53,7 @@ public class userRepositoryTest {
     void cleanup() {
         dbMock.close();
     }
+
 
     @Test
     void save_success() throws Exception {

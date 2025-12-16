@@ -20,7 +20,7 @@ import java.util.Optional;
  * @author  Sara
  * @version 1.0
  */
-public class userRepository {
+public class userRepository implements UserRepo {
 
     /**
      * Persists a new user record into the database.
@@ -29,6 +29,7 @@ public class userRepository {
      * @return {@code true} if the user was successfully inserted; {@code false} otherwise
      * @throws RuntimeException if a non-SQL exception occurs during database operation
      */
+    @Override
     public boolean save(user user) {
         String sql = "INSERT INTO users (email, role, password_hash) VALUES (?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -54,6 +55,8 @@ public class userRepository {
      * @param email the email of the user to retrieve
      * @return an {@link Optional} containing the {@link user} if found, or empty if no user exists with the given email
      */
+
+    @Override
     public Optional<user> findByEmail(String email) {
         String sql = "SELECT * FROM users WHERE email = ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -91,7 +94,7 @@ public class userRepository {
      * @param oneYearAgo the date threshold to determine inactivity
      * @return a {@link List} of inactive {@link user} objects
      */
-
+    @Override
     public List<user> findInactiveUsersSince(LocalDate oneYearAgo) {
         List<user> users = new ArrayList<>();
 
@@ -138,6 +141,7 @@ public class userRepository {
      * @param oneYearAgo the date threshold for inactivity
      * @return {@code true} if a user was successfully marked as deleted; {@code false} otherwise
      */
+    @Override
     public boolean softDeleteInactiveUser(String email, LocalDate oneYearAgo) {
         String sql = """
                 UPDATE users
@@ -174,6 +178,7 @@ public class userRepository {
      * @param newRole the new {@link Role} to assign to the user
      * @return {@code true} if the role was successfully updated; {@code false} otherwise
      */
+    @Override
     public boolean updateRole(String email, Role newRole) {
         String sql = "UPDATE users SET role = ? WHERE email = ?";
 
