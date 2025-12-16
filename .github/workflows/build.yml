@@ -1,5 +1,5 @@
 yaml 
-name: Build and Analyze 
+name: SonarQube
 on: 
 push: 
 branches: - master 
