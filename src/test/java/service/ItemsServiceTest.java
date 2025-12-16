@@ -23,9 +23,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class ItemsServiceTest {
 
+    @Mock
     private ItemsRepository itemsRepository;
-    private ItemsService itemsService;
 
+    @InjectMocks
+    private ItemsService itemsService;
     // --------------------------------------------------------
     //  Setup / Teardown
     // --------------------------------------------------------

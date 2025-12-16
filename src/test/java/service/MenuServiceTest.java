@@ -20,30 +20,33 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class MenuServiceTest {
 
-    private userService mockUserService;
-    private ItemsService mockItemsService;
-    private BorrowService mockBorrowService;
-    private EmailService mockEmailService;
+        @Mock
+        private userService mockUserService;
 
-    private ByteArrayOutputStream outContent;
-    private PrintStream originalOut;
+        @Mock
+        private ItemsService mockItemsService;
 
-//    @BeforeEach
-//    void setUp() {
-//        mockUserService = mock(userService.class);
-//        mockItemsService = mock(ItemsService.class);
-//        mockBorrowService = mock(BorrowService.class);
-//        mockEmailService = mock(EmailService.class);
-//
-//        outContent = new ByteArrayOutputStream();
-//        originalOut = System.out;
-//        System.setOut(new PrintStream(outContent));
-//    }
-//
-//    @AfterEach
-//    void tearDown() {
-//        System.setOut(originalOut);
-//    }
+        @Mock
+        private BorrowService mockBorrowService;
+
+        @Mock
+        private EmailService mockEmailService;
+
+        private ByteArrayOutputStream outContent;
+        private PrintStream originalOut;
+
+        @BeforeEach
+        void setUp() {
+            outContent = new ByteArrayOutputStream();
+            originalOut = System.out;
+            System.setOut(new PrintStream(outContent));
+        }
+
+        @AfterEach
+        void tearDown() {
+            System.setOut(originalOut);
+        }
+
 
     // Helper to create menuService with input
     private menuService createMenu(String input) {

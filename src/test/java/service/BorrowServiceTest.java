@@ -28,8 +28,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class BorrowServiceTest {
+    @Mock
     private BorrowRepository borrowRepo;
+
+    @Mock
     private ItemsRepository itemsRepo;
+
+    @InjectMocks
     private BorrowService borrowService;
 
 //    @BeforeEach
@@ -162,7 +167,7 @@ class BorrowServiceTest {
         String email = "sara@gmail.com";
         int isbn = 1000;
         when(borrowRepo.getTotalFine(email)).thenReturn(0);
-        when(itemsRepo.findByISBN(isbn)).thenReturn(null);
+        when(itemsRepo.findByISBN(isbn)).thenReturn(Optional.empty());
         Exception ex = assertThrows(
                 IllegalArgumentException.class,
                 () -> borrowService.returnItem(email, isbn)
