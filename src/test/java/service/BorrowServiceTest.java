@@ -32,16 +32,16 @@ class BorrowServiceTest {
     private ItemsRepository itemsRepo;
     private BorrowService borrowService;
 
-    @BeforeEach
-    void setUp() {
-        borrowRepo = mock(BorrowRepository.class);
-        itemsRepo = mock(ItemsRepository.class);
-        borrowService = new BorrowService(borrowRepo, itemsRepo);
-    }
-
-    @AfterEach
-    void tearDown() {
-    }
+//    @BeforeEach
+//    void setUp() {
+//        borrowRepo = mock(BorrowRepository.class);
+//        itemsRepo = mock(ItemsRepository.class);
+//        borrowService = new BorrowService(borrowRepo, itemsRepo);
+//    }
+//
+//    @AfterEach
+//    void tearDown() {
+//    }
 
     @Test
     void hasUnpaidFine() {

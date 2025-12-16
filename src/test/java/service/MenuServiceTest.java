@@ -28,22 +28,22 @@ class MenuServiceTest {
     private ByteArrayOutputStream outContent;
     private PrintStream originalOut;
 
-    @BeforeEach
-    void setUp() {
-        mockUserService = mock(userService.class);
-        mockItemsService = mock(ItemsService.class);
-        mockBorrowService = mock(BorrowService.class);
-        mockEmailService = mock(EmailService.class);
-
-        outContent = new ByteArrayOutputStream();
-        originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-    }
-
-    @AfterEach
-    void tearDown() {
-        System.setOut(originalOut);
-    }
+//    @BeforeEach
+//    void setUp() {
+//        mockUserService = mock(userService.class);
+//        mockItemsService = mock(ItemsService.class);
+//        mockBorrowService = mock(BorrowService.class);
+//        mockEmailService = mock(EmailService.class);
+//
+//        outContent = new ByteArrayOutputStream();
+//        originalOut = System.out;
+//        System.setOut(new PrintStream(outContent));
+//    }
+//
+//    @AfterEach
+//    void tearDown() {
+//        System.setOut(originalOut);
+//    }
 
     // Helper to create menuService with input
     private menuService createMenu(String input) {

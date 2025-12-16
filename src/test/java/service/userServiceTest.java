@@ -25,16 +25,16 @@ class userServiceTest {
     private EmailService emailService;
     private userService userService;
 
-    @BeforeEach
-    void setUp() {
-        userRepository = mock(userRepository.class);
-        emailService = mock(EmailService.class);
-        userService = new userService(userRepository, emailService);
-    }
-
-    @AfterEach
-    void tearDown() {
-    }
+//    @BeforeEach
+//    void setUp() {
+//        userRepository = mock(userRepository.class);
+//        emailService = mock(EmailService.class);
+//        userService = new userService(userRepository, emailService);
+//    }
+//
+//    @AfterEach
+//    void tearDown() {
+//    }
 
     @Test
     void registerUser() {

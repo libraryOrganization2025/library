@@ -33,26 +33,26 @@ public class userRepositoryTest {
 
     private MockedStatic<DatabaseConnection> dbMock;
 
-    @BeforeEach
-    void setup() throws Exception {
-        repo = new userRepository();
-
-        conn = mock(Connection.class);
-        stmt = mock(PreparedStatement.class);
-        rs = mock(ResultSet.class);
-
-        dbMock = mockStatic(DatabaseConnection.class);
-        dbMock.when(DatabaseConnection::getConnection).thenReturn(conn);
-
-        when(conn.prepareStatement(anyString())).thenReturn(stmt);
-        when(stmt.executeQuery()).thenReturn(rs);
-        when(stmt.executeUpdate()).thenReturn(1);
-    }
-
-    @AfterEach
-    void cleanup() {
-        dbMock.close();
-    }
+//    @BeforeEach
+//    void setup() throws Exception {
+//        repo = new userRepository();
+//
+//        conn = mock(Connection.class);
+//        stmt = mock(PreparedStatement.class);
+//        rs = mock(ResultSet.class);
+//
+//        dbMock = mockStatic(DatabaseConnection.class);
+//        dbMock.when(DatabaseConnection::getConnection).thenReturn(conn);
+//
+//        when(conn.prepareStatement(anyString())).thenReturn(stmt);
+//        when(stmt.executeQuery()).thenReturn(rs);
+//        when(stmt.executeUpdate()).thenReturn(1);
+//    }
+//
+//    @AfterEach
+//    void cleanup() {
+//        dbMock.close();
+//    }
 
 
     @Test

@@ -30,15 +30,15 @@ class ItemsServiceTest {
     //  Setup / Teardown
     // --------------------------------------------------------
 
-    @BeforeEach
-    void setUp() {
-        itemsRepository = mock(ItemsRepository.class);
-        itemsService = new ItemsService(itemsRepository);
-    }
-
-    @AfterEach
-    void tearDown() {
-    }
+//    @BeforeEach
+//    void setUp() {
+//        itemsRepository = mock(ItemsRepository.class);
+//        itemsService = new ItemsService(itemsRepository);
+//    }
+//
+//    @AfterEach
+//    void tearDown() {
+//    }
 
     // --------------------------------------------------------
     //  addNewItem() Tests
