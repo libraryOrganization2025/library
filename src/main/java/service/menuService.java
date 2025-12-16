@@ -404,6 +404,9 @@ public class menuService {
      * Handles adding a new item or increasing quantity for an existing item via {@link ItemsService}.
      */
     void handleAddItem() {
+        if (!scanner.hasNextLine()) {
+            return;
+        }
         System.out.println("\n--- Add Item ---");
 
         System.out.println("Choose type:");
@@ -484,6 +487,9 @@ public class menuService {
         System.out.println("3. Search by ISBN");
         System.out.println("4. Back");
         System.out.print("Enter choice: ");
+        if (!scanner.hasNextLine()) {
+            return;
+        }
 
         String choice = scanner.nextLine().trim();
 
@@ -531,6 +537,9 @@ public class menuService {
         System.out.println("3. Search by ISBN");
         System.out.println("4. Back");
         System.out.print("Enter choice: ");
+        if (!scanner.hasNextLine()) {
+            return;
+        }
 
         String choice = scanner.nextLine().trim();
 
