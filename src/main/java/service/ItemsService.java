@@ -27,7 +27,7 @@ public class ItemsService {
      *
      * @param itemsRepository the repository used for item operations
      */
-    public ItemsService(ItemsRepository itemsRepository) {
+    public ItemsService(ItemsRepo itemsRepository) {
         this.itemsRepository = itemsRepository;
     }
 

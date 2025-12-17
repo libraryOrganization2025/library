@@ -5,6 +5,7 @@ import domain.Items;
 import domain.libraryType;
 import repository.BorrowRepo;
 import repository.BorrowRepository;
+import repository.ItemsRepo;
 import repository.ItemsRepository;
 import domain.strategyPattern.FineStrategyFactory;
 import domain.strategyPattern.FineStrategy;
@@ -28,7 +29,7 @@ import java.util.List;
 public class BorrowService {
 
     private BorrowRepo borrowRepo;
-    private  ItemsRepository itemsRepo;
+    private ItemsRepo itemsRepo;
 
     /**
      * Constructs a {@link BorrowService} with the required repositories.
@@ -36,7 +37,7 @@ public class BorrowService {
      * @param borrowRepo repository for borrow-related operations
      * @param itemsRepo repository for item-related operations
      */
-    public BorrowService(BorrowRepo borrowRepo, ItemsRepository itemsRepo) {
+    public BorrowService(BorrowRepo borrowRepo, ItemsRepo itemsRepo) {
         this.borrowRepo = borrowRepo;
         this.itemsRepo = itemsRepo;
     }
