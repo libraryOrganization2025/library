@@ -815,6 +815,90 @@ class MenuServiceTest {
         assertTrue(outContent.toString().contains("Invalid amount"));
     }
 
+    @Test
+    void testMainMenuMultipleInvalidThenExit() {
+        menuService menu = createMenu("x\n!\n3\n");
+        menu.showMainMenu();
+        String out = outContent.toString();
+        assertTrue(out.contains("Invalid option"));
+        assertTrue(out.contains("Exiting"));
+    }
 
+    @Test
+    void testMainMenuWhitespaceInput() {
+        menuService menu = createMenu(" \n3\n");
+        menu.showMainMenu();
+        String out = outContent.toString();
+        assertTrue(out.contains("Invalid option"));
+    }
+
+    @Test
+    void testShowRoleBasedMenuUnknownEnum() {
+        user u = mock(user.class);
+        when(u.getRole()).thenReturn(null);
+        menuService menu = createMenu("");
+        boolean res = menu.showRoleBasedMenu(u);
+        assertFalse(res);
+        assertTrue(outContent.toString().contains("Unknown role"));
+    }
+
+    @Test
+    void testStudentReturnItemNotBorrowed() {
+        user student = mock(user.class);
+        when(student.getEmail()).thenReturn("s@test.com");
+        when(student.getRole()).thenReturn(Role.STUDENT);
+
+        when(mockBorrowService.hasUnpaidFine("s@test.com")).thenReturn(false);
+        when(mockBorrowService.returnItem("s@test.com", 999)).thenReturn(false);
+
+        menuService menu = createMenu("4\n999\n6\n");
+        menu.showRoleBasedMenu(student);
+
+        assertTrue(outContent.toString().contains("Could not return"));
+    }
+
+    @Test
+    void testShowLibrarianMenuInvalidThenLogout() {
+        menuService menu = createMenu("x\n2\n");
+        menu.showLibrarianMenu();
+        String out = outContent.toString();
+        assertTrue(out.contains("Invalid choice"));
+    }
+
+    @Test
+    void testStudentPayFineExcess() {
+        user student = mock(user.class);
+        when(student.getEmail()).thenReturn("s@test.com");
+        when(student.getRole()).thenReturn(Role.STUDENT);
+
+        when(mockBorrowService.getTotalFine("s@test.com")).thenReturn(50).thenReturn(0);
+        menuService menu = createMenu("5\n60\n6\n"); // paying 60 while total is 50
+        menu.showRoleBasedMenu(student);
+
+        verify(mockBorrowService).payFine("s@test.com", 60);
+        assertTrue(outContent.toString().contains("Remaining fine: 0"));
+    }
+
+    @Test
+    void testSearchBookInvalidOption() {
+        menuService menu = createMenu("9\n");
+        menu.handleSearchBook();
+        assertTrue(outContent.toString().contains("Invalid choice"));
+    }
+
+    @Test
+    void testSearchCDInvalidOption() {
+        menuService menu = createMenu("9\n");
+        menu.handleSearchCD();
+        assertTrue(outContent.toString().contains("Invalid choice"));
+    }
+
+    @Test
+    void testHandleAddItemNewFails() {
+        when(mockItemsService.addNewItem(any(), any(), anyInt(), any())).thenReturn(false);
+        menuService menu = createMenu("2\n2\nName\nAuthor\n1\n");
+        menu.handleAddItem();
+        assertTrue(outContent.toString().contains("Failed to add item"));
+    }
 
 }
