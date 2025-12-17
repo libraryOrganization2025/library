@@ -15,8 +15,8 @@
         <maven.compiler.target>23</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <sonar.organization>libraryorganization2025</sonar.organization>
-        <sonar.projectKey>libraryorganization2025_library</sonar.projectKey>
+        <sonar.organization>libraryOrganization2025</sonar.organization>
+        <sonar.projectKey>libraryOrganization2025_library</sonar.projectKey>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 
