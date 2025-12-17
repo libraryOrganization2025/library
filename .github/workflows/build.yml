@@ -49,7 +49,7 @@ jobs:
         run: >
           mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:5.0.0.4389:sonar 
           -Dsonar.projectKey=libraryOrganization2025_library
-          -Dsonar.organization=libraryOrganization2025
+          -Dsonar.organization=libraryorganization2025
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.branch.name=master
           -Dsonar.qualitygate.wait=true
