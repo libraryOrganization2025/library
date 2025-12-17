@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import repository.BorrowRepo;
 import repository.BorrowRepository;
 import repository.ItemsRepository;
 
@@ -25,7 +26,7 @@ import static org.mockito.Mockito.*;
 class BorrowServiceTest {
 
     @Mock
-    private BorrowRepository borrowRepo;
+    private BorrowRepo borrowRepo;
 
     @Mock
     private ItemsRepository itemsRepo;
