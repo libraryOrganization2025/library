@@ -143,7 +143,7 @@ public class menuService {
             }
         }
 
-        return loggedIn;
+        return true;
     }
 
 
