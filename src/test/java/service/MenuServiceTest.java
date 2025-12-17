@@ -901,4 +901,125 @@ class MenuServiceTest {
         assertTrue(outContent.toString().contains("Failed to add item"));
     }
 
+    @Test
+    void testHandleAddItemNewItemFailure() {
+        menuService menu = createMenu("1\n2\nBookName\nAuthorName\nabc\n"); // invalid quantity
+        when(mockItemsService.addNewItem(anyString(), anyString(), anyInt(), any())).thenReturn(false);
+
+        menu.handleAddItem();
+
+        assertTrue(outContent.toString().contains("Quantity must be a number") || outContent.toString().contains("Failed"));
+    }
+
+    @Test
+    void testHandleAddItemNewItemSuccess() {
+        menuService menu = createMenu("1\n2\nBookName\nAuthorName\n5\n");
+        when(mockItemsService.addNewItem("BookName","AuthorName",5, libraryType.BOOK)).thenReturn(true);
+
+        menu.handleAddItem();
+
+        verify(mockItemsService).addNewItem("BookName","AuthorName",5, libraryType.BOOK);
+        assertTrue(outContent.toString().contains("Item added successfully"));
+    }
+
+    @Test
+    void testHandleSearchBookByAuthorNoResults() {
+        when(mockItemsService.searchBooksByAuthor("Unknown")).thenReturn(List.of());
+        menuService menu = createMenu("2\nUnknown\n"); // 2 = search by author
+
+        menu.handleSearchBook();
+
+        assertTrue(outContent.toString().contains("No items found"));
+    }
+
+    @Test
+    void testHandleSearchCDByNameResults() {
+        Items cd = mock(Items.class);
+        when(cd.getType()).thenReturn(libraryType.CD);
+        when(cd.getISBN()).thenReturn("10");
+        when(cd.getName()).thenReturn("Hits");
+        when(cd.getAuthor()).thenReturn("Artist");
+        when(cd.getQuantity()).thenReturn(3);
+
+        when(mockItemsService.searchCDsByName("Hits")).thenReturn(List.of(cd));
+
+        menuService menu = createMenu("1\nHits\n"); // 1 = search by name
+        menu.handleSearchCD();
+
+        String output = outContent.toString();
+        assertTrue(output.contains("Hits"));
+        assertTrue(output.contains("Artist"));
+    }
+
+    @Test
+    void testStudentBorrowFails() {
+        user student = mock(user.class);
+        when(student.getEmail()).thenReturn("s@test.com");
+        when(student.getRole()).thenReturn(Role.STUDENT);
+
+        when(mockBorrowService.hasUnpaidFine("s@test.com")).thenReturn(false);
+        when(mockBorrowService.borrowItem("s@test.com", 999)).thenReturn(false);
+
+        menuService menu = createMenu("3\n999\n6\n");
+        menu.showRoleBasedMenu(student);
+
+        assertTrue(outContent.toString().contains("Could not borrow item"));
+    }
+
+    @Test
+    void testStudentReturnFails() {
+        user student = mock(user.class);
+        when(student.getEmail()).thenReturn("s@test.com");
+        when(student.getRole()).thenReturn(Role.STUDENT);
+
+        when(mockBorrowService.hasUnpaidFine("s@test.com")).thenReturn(false);
+        when(mockBorrowService.returnItem("s@test.com", 999)).thenReturn(false);
+
+        menuService menu = createMenu("4\n999\n6\n");
+        menu.showRoleBasedMenu(student);
+
+        assertTrue(outContent.toString().contains("Could not return item"));
+    }
+
+    @Test
+    void testStudentPayFineInvalidAmount() {
+        user student = mock(user.class);
+        when(student.getEmail()).thenReturn("s@test.com");
+        when(student.getRole()).thenReturn(Role.STUDENT);
+
+        when(mockBorrowService.getTotalFine("s@test.com")).thenReturn(50);
+
+        menuService menu = createMenu("5\n-10\n6\n");
+        menu.showRoleBasedMenu(student);
+
+        assertTrue(outContent.toString().contains("Invalid amount"));
+    }
+
+    @Test
+    void testStudentPayFineNonNumeric() {
+        user student = mock(user.class);
+        when(student.getEmail()).thenReturn("s@test.com");
+        when(student.getRole()).thenReturn(Role.STUDENT);
+
+        when(mockBorrowService.getTotalFine("s@test.com")).thenReturn(50);
+
+        menuService menu = createMenu("5\nabc\n6\n");
+        menu.showRoleBasedMenu(student);
+
+        assertTrue(outContent.toString().contains("Amount must be a number"));
+    }
+
+    @Test
+    void testShowRoleBasedMenuUnknownRoleLoop() {
+        user unknown = mock(user.class);
+        when(unknown.getRole()).thenReturn(null);
+
+        menuService menu = createMenu("");
+        boolean result = menu.showRoleBasedMenu(unknown);
+
+        assertFalse(result);
+        assertTrue(outContent.toString().contains("Unknown role"));
+    }
+
+    
 }
