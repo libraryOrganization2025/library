@@ -96,7 +96,7 @@ public class BorrowService {
                 .orElseThrow(() -> new IllegalArgumentException("Item not found"));
 
         LocalDate today = LocalDate.now();
-        LocalDate overdue = item.getType() == libraryType.Book ? today.plusDays(28) : today.plusDays(7);
+        LocalDate overdue = item.getType() == libraryType.BOOK ? today.plusDays(28) : today.plusDays(7);
 
         Borrow borrow = new Borrow(studentEmail, isbn, today, overdue, false);
         return borrowRepo.borrowItem(borrow);

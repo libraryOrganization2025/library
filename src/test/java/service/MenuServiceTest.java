@@ -2,7 +2,6 @@ package service;
 
 import domain.*;
 import org.junit.jupiter.api.*;
-import org.mockito.Mockito;
 
 import java.io.*;
 import java.util.List;
@@ -13,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -420,7 +418,7 @@ class MenuServiceTest {
         assertDoesNotThrow(() -> {
             var method = menuService.class.getDeclaredMethod("printItems", List.class, libraryType.class);
             method.setAccessible(true);
-            method.invoke(menu, emptyList, libraryType.Book);
+            method.invoke(menu, emptyList, libraryType.BOOK);
         });
         assertTrue(outContent.toString().contains("No items found"));
     }
@@ -431,7 +429,7 @@ class MenuServiceTest {
         Items item1 = mock(Items.class);
         Items item2 = mock(Items.class);
         when(item1.getType()).thenReturn(libraryType.CD);
-        when(item2.getType()).thenReturn(libraryType.Book);
+        when(item2.getType()).thenReturn(libraryType.BOOK);
         when(item2.getISBN()).thenReturn("123");
         when(item2.getName()).thenReturn("BookName");
         when(item2.getAuthor()).thenReturn("Author");
@@ -439,7 +437,7 @@ class MenuServiceTest {
 
         var method = menuService.class.getDeclaredMethod("printItems", List.class, libraryType.class);
         method.setAccessible(true);
-        method.invoke(menu, List.of(item1, item2), libraryType.Book);
+        method.invoke(menu, List.of(item1, item2), libraryType.BOOK);
 
         String output = outContent.toString();
         assertTrue(output.contains("BookName"));
@@ -454,7 +452,7 @@ class MenuServiceTest {
         when(item.getISBN()).thenReturn("123");
         when(item.getName()).thenReturn("TestBook");
         when(item.getAuthor()).thenReturn("AuthorA");
-        when(item.getType()).thenReturn(libraryType.Book);
+        when(item.getType()).thenReturn(libraryType.BOOK);
         when(item.getQuantity()).thenReturn(5);
 
         var m = menuService.class.getDeclaredMethod("printSingleItem", Items.class);

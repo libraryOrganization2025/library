@@ -416,7 +416,7 @@ public class menuService {
         String t = scanner.nextLine().trim();
 
         libraryType type = switch (t) {
-            case "1" -> libraryType.Book;
+            case "1" -> libraryType.BOOK;
             case "2" -> libraryType.CD;
             default -> null;
         };
@@ -499,19 +499,19 @@ public class menuService {
                     System.out.print("Enter book name (or part of it): ");
                     String name = scanner.nextLine().trim();
                     List<Items> items = itemsService.searchBooksByName(name);
-                    printItems(items, libraryType.Book);
+                    printItems(items, libraryType.BOOK);
                 }
                 case "2" -> {
                     System.out.print("Enter author name (or part of it): ");
                     String author = scanner.nextLine().trim();
                     List<Items> items = itemsService.searchBooksByAuthor(author);
-                    printItems(items, libraryType.Book);
+                    printItems(items, libraryType.BOOK);
                 }
                 case "3" -> {
                     System.out.print("Enter ISBN (number): ");
                     String isbn = scanner.nextLine().trim();
                     Items item = itemsService.searchByISBN(isbn);
-                    if (item.getType() == libraryType.Book) {
+                    if (item.getType() == libraryType.BOOK) {
                         printSingleItem(item);
                     } else {
                         System.out.println("❌ This ISBN belongs to a CD, not a Book.");

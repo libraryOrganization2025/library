@@ -138,10 +138,10 @@ public class ItemsService {
      * Searches for books by name.
      *
      * @param name the name of the book
-     * @return a list of matching {@link Items} of type {@link libraryType#Book}
+     * @return a list of matching {@link Items} of type {@link libraryType#BOOK}
      */
     public List<Items> searchBooksByName(String name) {
-        return searchByName(name, libraryType.Book);
+        return searchByName(name, libraryType.BOOK);
     }
 
     /**
@@ -158,10 +158,10 @@ public class ItemsService {
      * Searches for books by author.
      *
      * @param author the author of the book
-     * @return a list of matching {@link Items} of type {@link libraryType#Book}
+     * @return a list of matching {@link Items} of type {@link libraryType#BOOK}
      */
     public List<Items> searchBooksByAuthor(String author) {
-        return searchByAuthor(author, libraryType.Book);
+        return searchByAuthor(author, libraryType.BOOK);
     }
 
     /**

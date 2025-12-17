@@ -6,8 +6,6 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import repository.ItemsRepository;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -15,8 +13,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -53,7 +50,7 @@ class ItemsServiceTest {
     void addNewItem_Success() {
         when(itemsRepository.addItem(any(Items.class))).thenReturn(true);
 
-        boolean result = itemsService.addNewItem("Sara's Test", "Sara Taha", 10, libraryType.Book);
+        boolean result = itemsService.addNewItem("Sara's Test", "Sara Taha", 10, libraryType.BOOK);
 
         assertTrue(result);
         verify(itemsRepository).addItem(any(Items.class));
@@ -63,7 +60,7 @@ class ItemsServiceTest {
     void addNewItem_BlankName_ThrowsException() {
         Exception ex = assertThrows(
                 IllegalArgumentException.class,
-                () -> itemsService.addNewItem("   ", "Author", 5, libraryType.Book)
+                () -> itemsService.addNewItem("   ", "Author", 5, libraryType.BOOK)
         );
         assertEquals("Item name cannot be empty.", ex.getMessage());
         verifyNoInteractions(itemsRepository);
@@ -73,7 +70,7 @@ class ItemsServiceTest {
     void addNewItem_BlankAuthor_ThrowsException() {
         Exception ex = assertThrows(
                 IllegalArgumentException.class,
-                () -> itemsService.addNewItem("Title", " ", 5, libraryType.Book)
+                () -> itemsService.addNewItem("Title", " ", 5, libraryType.BOOK)
         );
         assertEquals("Author cannot be empty.", ex.getMessage());
         verifyNoInteractions(itemsRepository);
@@ -83,7 +80,7 @@ class ItemsServiceTest {
     void addNewItem_ZeroQuantity_ThrowsException() {
         Exception ex = assertThrows(
                 IllegalArgumentException.class,
-                () -> itemsService.addNewItem("Title", "Author", 0, libraryType.Book)
+                () -> itemsService.addNewItem("Title", "Author", 0, libraryType.BOOK)
         );
         assertEquals("Quantity must be greater than 0.", ex.getMessage());
         verifyNoInteractions(itemsRepository);
@@ -93,7 +90,7 @@ class ItemsServiceTest {
     void addNewItem_NegativeQuantity_ThrowsException() {
         Exception ex = assertThrows(
                 IllegalArgumentException.class,
-                () -> itemsService.addNewItem("Title", "Author", -5, libraryType.Book)
+                () -> itemsService.addNewItem("Title", "Author", -5, libraryType.BOOK)
         );
         assertEquals("Quantity must be greater than 0.", ex.getMessage());
         verifyNoInteractions(itemsRepository);
@@ -113,7 +110,7 @@ class ItemsServiceTest {
     void addNewItem_NullName_ThrowsException() {
         Exception ex = assertThrows(
                 IllegalArgumentException.class,
-                () -> itemsService.addNewItem(null, "Author", 5, libraryType.Book)
+                () -> itemsService.addNewItem(null, "Author", 5, libraryType.BOOK)
         );
         assertEquals("Item name cannot be empty.", ex.getMessage());
         verifyNoInteractions(itemsRepository);
@@ -123,7 +120,7 @@ class ItemsServiceTest {
     void addNewItem_NullAuthor_ThrowsException() {
         Exception ex = assertThrows(
                 IllegalArgumentException.class,
-                () -> itemsService.addNewItem("Title", null, 5, libraryType.Book)
+                () -> itemsService.addNewItem("Title", null, 5, libraryType.BOOK)
         );
         assertEquals("Author cannot be empty.", ex.getMessage());
         verifyNoInteractions(itemsRepository);
@@ -136,7 +133,7 @@ class ItemsServiceTest {
     @Test
     void increaseQuantityByISBN_Success() {
         int isbn = 123;
-        Items existingItem = new Items("Author", "Title", libraryType.Book, 5, "");
+        Items existingItem = new Items("Author", "Title", libraryType.BOOK, 5, "");
 
         when(itemsRepository.findByISBN(isbn)).thenReturn(Optional.of(existingItem));
         when(itemsRepository.increaseQuantity(isbn)).thenReturn(true);
@@ -198,7 +195,7 @@ class ItemsServiceTest {
 
     @Test
     void searchByISBN_Success() {
-        Items mockItem = new Items("Author", "Title", libraryType.Book, 10, "123");
+        Items mockItem = new Items("Author", "Title", libraryType.BOOK, 10, "123");
         when(itemsRepository.findByISBN(123)).thenReturn(Optional.of(mockItem));
 
         Items result = itemsService.searchByISBN("123");
@@ -258,7 +255,7 @@ class ItemsServiceTest {
     void searchByName_AllTypesReturned_WhenTypeIsNull() {
         String name = "Sara";
         List<Items> mockList = List.of(
-                new Items("A1", "Sara", libraryType.Book, 3, "1"),
+                new Items("A1", "Sara", libraryType.BOOK, 3, "1"),
                 new Items("A2", "Sara", libraryType.CD, 2, "2")
         );
 
@@ -273,16 +270,16 @@ class ItemsServiceTest {
     @Test
     void searchByName_FiltersWrongType() {
         List<Items> list = List.of(
-                new Items("A1", "Sara", libraryType.Book, 3, "1"),
+                new Items("A1", "Sara", libraryType.BOOK, 3, "1"),
                 new Items("A2", "Sara", libraryType.CD, 2, "2")
         );
 
         when(itemsRepository.findByName("Sara")).thenReturn(list);
 
-        List<Items> result = itemsService.searchByName("Sara", libraryType.Book);
+        List<Items> result = itemsService.searchByName("Sara", libraryType.BOOK);
 
         assertEquals(1, result.size());
-        assertEquals(libraryType.Book, result.get(0).getType());
+        assertEquals(libraryType.BOOK, result.get(0).getType());
     }
 
     @Test
@@ -302,7 +299,7 @@ class ItemsServiceTest {
 
         when(itemsRepository.findByName("Sara")).thenReturn(list);
 
-        List<Items> result = itemsService.searchByName("Sara", libraryType.Book);
+        List<Items> result = itemsService.searchByName("Sara", libraryType.BOOK);
 
         assertTrue(result.isEmpty());
     }
@@ -315,7 +312,7 @@ class ItemsServiceTest {
     void searchByAuthor_AllTypesReturned_WhenTypeNull() {
         String author = "Sara";
         List<Items> list = List.of(
-                new Items("Sara", "Book1", libraryType.Book, 3, "1"),
+                new Items("Sara", "Book1", libraryType.BOOK, 3, "1"),
                 new Items("Sara", "CD1", libraryType.CD, 5, "2")
         );
 
@@ -330,7 +327,7 @@ class ItemsServiceTest {
     void searchByAuthor_FilterCorrectly() {
         String author = "Sara";
         List<Items> list = List.of(
-                new Items("Sara", "Book1", libraryType.Book, 3, "1"),
+                new Items("Sara", "Book1", libraryType.BOOK, 3, "1"),
                 new Items("Sara", "CD1", libraryType.CD, 5, "2")
         );
 
@@ -354,7 +351,7 @@ class ItemsServiceTest {
     @Test
     void searchByAuthor_FilterReturnsEmpty() {
         List<Items> list = List.of(
-                new Items("Sara", "Title", libraryType.Book, 3, "1")
+                new Items("Sara", "Title", libraryType.BOOK, 3, "1")
         );
 
         when(itemsRepository.findByAuthor("Sara")).thenReturn(list);
@@ -371,14 +368,14 @@ class ItemsServiceTest {
     @Test
     void searchBooksByName_Success() {
         List<Items> list = List.of(
-                new Items("A1", "Sara", libraryType.Book, 3, "1")
+                new Items("A1", "Sara", libraryType.BOOK, 3, "1")
         );
         when(itemsRepository.findByName("Sara")).thenReturn(list);
 
         List<Items> result = itemsService.searchBooksByName("Sara");
 
         assertEquals(1, result.size());
-        assertEquals(libraryType.Book, result.get(0).getType());
+        assertEquals(libraryType.BOOK, result.get(0).getType());
     }
 
     @Test
@@ -419,14 +416,14 @@ class ItemsServiceTest {
     @Test
     void searchBooksByAuthor_Success() {
         List<Items> list = List.of(
-                new Items("Sara", "Book1", libraryType.Book, 3, "1")
+                new Items("Sara", "Book1", libraryType.BOOK, 3, "1")
         );
         when(itemsRepository.findByAuthor("Sara")).thenReturn(list);
 
         List<Items> result = itemsService.searchBooksByAuthor("Sara");
 
         assertEquals(1, result.size());
-        assertEquals(libraryType.Book, result.get(0).getType());
+        assertEquals(libraryType.BOOK, result.get(0).getType());
     }
 
     @Test

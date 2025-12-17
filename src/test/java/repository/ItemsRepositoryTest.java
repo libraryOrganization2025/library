@@ -62,7 +62,7 @@ public class ItemsRepositoryTest {
     @Test
     void addItem_Success() throws Exception {
         // Arrange
-        Items item = new Items("Author", "Title", libraryType.Book, 10, "111");
+        Items item = new Items("Author", "Title", libraryType.BOOK, 10, "111");
         when(stmt.executeUpdate()).thenReturn(1);
 
         // Act

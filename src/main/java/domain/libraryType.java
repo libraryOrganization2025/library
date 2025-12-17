@@ -19,7 +19,7 @@ public enum libraryType {
     CD(1, 7, 20),
 
     /** Book item: 2 type ID, 28-day overdue limit, 10-unit price. */
-    Book(2, 28, 10);
+    BOOK(2, 28, 10);
 
     /** Unique type ID. */
     private int id;
