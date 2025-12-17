@@ -16,10 +16,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for better analysis
+          fetch-depth: 0 
 
       - name: Set up JDK 23
-        uses: actions/setup-java@v4 # Updated to v4 for better stability
+        uses: actions/setup-java@v4
         with:
           java-version: '23'
           distribution: 'zulu'
@@ -42,16 +42,15 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # MAVEN_OPTS helps Maven itself handle Java 23
           MAVEN_OPTS: >
             -XX:+EnableDynamicAgentLoading
             --add-opens java.base/java.lang=ALL-UNNAMED
             --add-opens java.base/java.util=ALL-UNNAMED
-            --add-opens java.base/java.time=ALL-UNNAMED
-            --add-opens java.sql/java.sql=ALL-UNNAMED
         run: >
           mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar 
           -Dsonar.projectKey=libraryorganization2025_library
           -Dsonar.organization=libraryorganization2025
           -Dsonar.host.url=https://sonarcloud.io
+          -Dsonar.branch.name=master
+          -Dsonar.scm.provider=git
           -DargLine="-XX:+EnableDynamicAgentLoading"
