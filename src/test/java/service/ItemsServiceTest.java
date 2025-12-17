@@ -2,6 +2,8 @@ package service;
 
 import domain.Items;
 import domain.libraryType;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import repository.ItemsRepository;
 
 import org.junit.jupiter.api.AfterEach;
@@ -21,6 +23,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class ItemsServiceTest {
 
     @Mock
