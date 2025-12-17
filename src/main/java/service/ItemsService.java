@@ -2,6 +2,7 @@ package service;
 
 import domain.Items;
 import domain.libraryType;
+import repository.ItemsRepo;
 import repository.ItemsRepository;
 
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
  */
 public class ItemsService {
 
-    private final ItemsRepository itemsRepository;
+    private final ItemsRepo itemsRepository;
 
     /**
      * Constructs an {@link ItemsService} with the specified repository.
