@@ -1020,6 +1020,5 @@ class MenuServiceTest {
         assertFalse(result);
         assertTrue(outContent.toString().contains("Unknown role"));
     }
-
     
 }

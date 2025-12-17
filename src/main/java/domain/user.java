@@ -80,7 +80,12 @@ public class user {
         this.email = mail;
         this.role = role;
     }
-
+    /**
+     * Default constructor for creating an empty user object.
+     *
+     * <p>This constructor initializes a user without setting any fields.
+     * It can be used when the user details will be set later through setters.</p>
+     */
     public user() {
 
     }

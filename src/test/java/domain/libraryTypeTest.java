@@ -23,15 +23,6 @@ class libraryTypeTest {
         assertThrows(IllegalArgumentException.class, () -> libraryType.chooseType(-5));
     }
 
-   /* @Test
-    void fromStringType() {
-        assertEquals(libraryType.CD, libraryType.fromStringType("cd"));
-        assertEquals(libraryType.CD, libraryType.fromStringType("Cd"));
-        assertEquals(libraryType.Book, libraryType.fromStringType("book"));
-        assertEquals(libraryType.Book, libraryType.fromStringType("BoOk"));
-        assertThrows(IllegalArgumentException.class, () -> libraryType.fromStringType("magazine"));
-        assertThrows(IllegalArgumentException.class, () -> libraryType.fromStringType(""));
-    }*/
 
     @Test
     void values() {

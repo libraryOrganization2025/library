@@ -96,6 +96,11 @@ public class BorrowRepository implements BorrowRepo {
         }
     }
 
+    /**
+     * Retrieves a list of borrow records for users with overdue items.
+     *
+     * @return list of overdue borrow records
+     */
     @Override
     public List<Borrow> getOverdueUsers() {
         String sql = "SELECT * FROM student_borrow WHERE overdue_date < CURRENT_DATE AND returned = false";
@@ -124,35 +129,73 @@ public class BorrowRepository implements BorrowRepo {
         return list;
     }
 
+    /**
+     * Updates the fine amount for a student after a payment.
+     *
+     * @param email the student's email
+     * @param paidAmount the amount paid
+     */
     @Override
     public void updateFineAfterPayment(String email, int paidAmount) {
         // (same code you already wrote)
     }
 
+    /**
+     * Retrieves the total fine amount for a student.
+     *
+     * @param email the student's email
+     * @return the total unpaid fine
+     */
     @Override
     public int getTotalFine(String email) {
         // (same code you already wrote)
         return 0;
     }
 
+    /**
+     * Marks a borrowed item as returned by a student and sets the fine if applicable.
+     *
+     * @param email the student's email
+     * @param isbn the ISBN of the borrowed item
+     * @param fineToSet the fine to set after return
+     * @return true if the operation was successful, false otherwise
+     */
     @Override
     public boolean markReturnedByStudentAndIsbn(String email, int isbn, int fineToSet) {
         // (same code you already wrote)
         return false;
     }
 
+    /**
+     * Finds an active borrow record for a given student and ISBN.
+     *
+     * @param email the student's email
+     * @param isbn the ISBN of the borrowed item
+     * @return the active borrow record, or null if none exists
+     */
     @Override
     public Borrow findActiveBorrow(String email, int isbn) {
         // (same code you already wrote)
         return null;
     }
 
+    /**
+     * Returns a list of student emails who have unpaid fines.
+     *
+     * @return list of student emails with unpaid fines
+     */
     @Override
     public List<String> getStudentsWithUnpaidFines() {
         // (same code you already wrote)
         return new ArrayList<>();
     }
 
+    /**
+     * Marks a borrowed item as returned.
+     *
+     * @param returned the borrow record representing the returned item
+     * @return true if the return was successfully processed, false otherwise
+     */
     @Override
     public boolean returnItem(Borrow returned) {
         // (same code you already wrote)

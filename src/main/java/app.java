@@ -13,7 +13,11 @@ public class app {
 
         System.out.println(config.EMAIL + config.EMAIL_PASSWORD);
         AppConfig _appConfig = new AppConfig(config.EMAIL, config.EMAIL_PASSWORD);
-        menuService menuService = new menuService(_appConfig.scanner, _appConfig.userService, _appConfig.itemsService , _appConfig.borrowService , _appConfig.emailService);
+        menuService menuService = new menuService(_appConfig.scanner,
+                _appConfig.userService,
+                _appConfig.itemsService,
+                _appConfig.borrowService,
+                _appConfig.emailService);
         menuService.showMainMenu();
 
         _appConfig.scanner.close();
