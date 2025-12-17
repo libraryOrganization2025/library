@@ -8,14 +8,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class libraryTypeTest {
 
-    @BeforeEach
-    void setUp() {
-    }
-
-    @AfterEach
-    void tearDown() {
-    }
-
     @Test
     void getType() {
         assertEquals(1, libraryType.CD.getType(), "CD type id should be 1");

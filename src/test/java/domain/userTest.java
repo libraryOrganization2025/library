@@ -11,14 +11,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class userTest {
 
-    @BeforeEach
-    void setUp() {
-    }
-
-    @AfterEach
-    void tearDown() {
-    }
-
     @Test
     void getEmail() {
         user u = new user("sara@gmail.com", Role.STUDENT, "abc123");

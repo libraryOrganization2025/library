@@ -8,13 +8,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class RoleTest {
 
-    @BeforeEach
-    void setUp() {
-    }
-
-    @AfterEach
-    void tearDown() {
-    }
 
     @Test
     void getLevel() {
