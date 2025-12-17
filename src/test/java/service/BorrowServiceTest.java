@@ -13,6 +13,7 @@ import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import repository.BorrowRepo;
 import repository.BorrowRepository;
+import repository.ItemsRepo;
 import repository.ItemsRepository;
 
 import java.time.LocalDate;
@@ -29,7 +30,7 @@ class BorrowServiceTest {
     private BorrowRepo borrowRepo;
 
     @Mock
-    private ItemsRepository itemsRepo;
+    private ItemsRepo itemsRepo;
 
     @InjectMocks
     private BorrowService borrowService;
