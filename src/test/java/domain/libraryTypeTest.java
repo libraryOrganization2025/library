@@ -52,7 +52,7 @@ class libraryTypeTest {
     @Test
     void valueOf() {
         assertEquals(libraryType.CD, libraryType.valueOf("CD"));
-        assertEquals(libraryType.BOOK, libraryType.valueOf("Book"));
+        assertEquals(libraryType.BOOK, libraryType.valueOf("BOOK"));
         assertThrows(IllegalArgumentException.class, () -> libraryType.valueOf("UNKNOWN"));
     }
 }

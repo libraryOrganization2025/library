@@ -46,7 +46,7 @@ public class ItemsRepositoryTest {
         // Matching your mapItem() method logic
         when(rs.getString("author")).thenReturn("Author Name");
         when(rs.getString("name")).thenReturn("Book Title");
-        when(rs.getString("type")).thenReturn("Book");
+        when(rs.getString("type")).thenReturn("BOOK");
         when(rs.getInt("quantity")).thenReturn(5);
         when(rs.getInt("isbn")).thenReturn(12345);
 
