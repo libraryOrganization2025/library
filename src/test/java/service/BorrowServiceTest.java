@@ -130,4 +130,146 @@ public class BorrowServiceTest {
         borrowService.getOverdueStudents();
         verify(borrowRepo).getOverdueUsers();
     }
+
+    @Test
+    void getStudentsWithUnpaidFines_CallsRepo() {
+        when(borrowRepo.getStudentsWithUnpaidFines())
+                .thenReturn(List.of("a@test.com", "b@test.com"));
+
+        List<String> result = borrowService.getStudentsWithUnpaidFines();
+
+        assertEquals(2, result.size());
+        verify(borrowRepo).getStudentsWithUnpaidFines();
+    }
+
+    @Test
+    void getTotalFine_ReturnsValue() {
+        when(borrowRepo.getTotalFine("x@test.com")).thenReturn(42);
+
+        assertEquals(42, borrowService.getTotalFine("x@test.com"));
+    }
+
+    @Test
+    void hasUnpaidFine_True() {
+        when(borrowRepo.getTotalFine("x@test.com")).thenReturn(10);
+
+        assertTrue(borrowService.hasUnpaidFine("x@test.com"));
+    }
+
+    @Test
+    void returnItem_UpdateFails_NoQuantityIncrease() {
+        String email = "student@test.com";
+        int isbn = 333;
+
+        Borrow borrow = new Borrow(
+                email,
+                isbn,
+                LocalDate.now().minusDays(10),
+                LocalDate.now().minusDays(5),
+                false
+        );
+
+        Items item = new Items("Auth", "Book", libraryType.BOOK, 1, String.valueOf(isbn));
+
+        when(borrowRepo.getTotalFine(email)).thenReturn(0);
+        when(borrowRepo.findActiveBorrow(email, isbn)).thenReturn(borrow);
+        when(itemsRepo.findByISBN(isbn)).thenReturn(Optional.of(item));
+        when(borrowRepo.markReturnedByStudentAndIsbn(any(), anyInt(), anyInt()))
+                .thenReturn(false);
+
+        boolean result = borrowService.returnItem(email, isbn);
+
+        assertFalse(result);
+        verify(itemsRepo, never()).increaseQuantity(anyInt());
+    }
+
+    @Test
+    void returnItem_NotOverdue_NoFine() {
+        String email = "student@test.com";
+        int isbn = 222;
+
+        Borrow borrow = new Borrow(
+                email,
+                isbn,
+                LocalDate.now().minusDays(2),
+                LocalDate.now().plusDays(5), // not overdue
+                false
+        );
+
+        Items item = new Items("Auth", "Book", libraryType.BOOK, 2, String.valueOf(isbn));
+
+        when(borrowRepo.getTotalFine(email)).thenReturn(0);
+        when(borrowRepo.findActiveBorrow(email, isbn)).thenReturn(borrow);
+        when(itemsRepo.findByISBN(isbn)).thenReturn(Optional.of(item));
+        when(borrowRepo.markReturnedByStudentAndIsbn(email, isbn, 0)).thenReturn(true);
+
+        boolean result = borrowService.returnItem(email, isbn);
+
+        assertTrue(result);
+        verify(itemsRepo).increaseQuantity(isbn);
+    }
+
+    @Test
+    void returnItem_ItemNotFound_ThrowsException() {
+        String email = "student@test.com";
+        int isbn = 555;
+
+        Borrow borrow = new Borrow(email, isbn,
+                LocalDate.now().minusDays(3),
+                LocalDate.now().plusDays(3),
+                false);
+
+        when(borrowRepo.getTotalFine(email)).thenReturn(0);
+        when(borrowRepo.findActiveBorrow(email, isbn)).thenReturn(borrow);
+        when(itemsRepo.findByISBN(isbn)).thenReturn(Optional.empty());
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> borrowService.returnItem(email, isbn)
+        );
+    }
+
+    @Test
+    void returnItem_UnpaidFine_ThrowsException() {
+        when(borrowRepo.getTotalFine("debtor@test.com")).thenReturn(20);
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> borrowService.returnItem("debtor@test.com", 123)
+        );
+
+        assertEquals(
+                "You have unpaid fines. Pay before returning items.",
+                ex.getMessage()
+        );
+    }
+
+    @Test
+    void borrowItem_Success_NonBook() {
+        int isbn = 777;
+        String email = "student@test.com";
+
+        // Use ANY non-BOOK type that exists in your enum
+        Items item = new Items(
+                "Auth",
+                "Some Item",
+                libraryType.CD,   // ✅ NOT BOOK
+                3,
+                String.valueOf(isbn)
+        );
+
+        when(borrowRepo.getTotalFine(email)).thenReturn(0);
+        when(itemsRepo.findByISBN(isbn)).thenReturn(Optional.of(item));
+        when(borrowRepo.borrowItem(any(Borrow.class))).thenReturn(true);
+
+        boolean result = borrowService.borrowItem(email, isbn);
+
+        assertTrue(result);
+
+        // 7-day logic branch
+        verify(borrowRepo).borrowItem(argThat(b ->
+                b.getOverdueDate().equals(b.getBorrowDate().plusDays(7))
+        ));
+    }
+
 }

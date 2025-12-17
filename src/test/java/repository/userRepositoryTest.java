@@ -215,4 +215,60 @@ public class userRepositoryTest {
 
         assertFalse(result);
     }
+
+    @Test
+    void findInactiveUsers_lastBorrowedNotNull() throws Exception {
+        LocalDate oneYearAgo = LocalDate.now().minusYears(1);
+
+        when(rs.next()).thenReturn(true, false);
+
+        when(rs.getString("email")).thenReturn("old@test.com");
+        when(rs.getInt("role")).thenReturn(Role.ADMIN.getLevel());
+        when(rs.getString("password_hash")).thenReturn("hash");
+
+        when(rs.getDate("lastdateborrowed"))
+                .thenReturn(Date.valueOf(oneYearAgo.minusDays(5)));
+        when(rs.getDate("createdOn"))
+                .thenReturn(Date.valueOf(oneYearAgo.minusYears(2)));
+        when(rs.getDate("deletedOn"))
+                .thenReturn(null);
+
+        List<user> result = repo.findInactiveUsersSince(oneYearAgo);
+
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    void findInactiveUsers_deletedOnNotNull() throws Exception {
+        LocalDate oneYearAgo = LocalDate.now().minusYears(1);
+
+        when(rs.next()).thenReturn(true, false);
+
+        when(rs.getString("email")).thenReturn("deleted@test.com");
+        when(rs.getInt("role")).thenReturn(Role.STUDENT.getLevel());
+        when(rs.getString("password_hash")).thenReturn("hash");
+
+        when(rs.getDate("lastdateborrowed")).thenReturn(null);
+        when(rs.getDate("createdOn"))
+                .thenReturn(Date.valueOf(oneYearAgo.minusDays(20)));
+        when(rs.getDate("deletedOn"))
+                .thenReturn(Date.valueOf(LocalDate.now().minusDays(1)));
+
+        List<user> result = repo.findInactiveUsersSince(oneYearAgo);
+
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    void updateRole_setsCorrectParams() throws Exception {
+        when(stmt.executeUpdate()).thenReturn(1);
+
+        repo.updateRole("param@test.com", Role.STUDENT);
+
+        verify(stmt).setString(1, String.valueOf(Role.STUDENT.getLevel()));
+        verify(stmt).setString(2, "param@test.com");
+    }
+
+
+
 }

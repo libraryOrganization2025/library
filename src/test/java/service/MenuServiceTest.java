@@ -672,4 +672,149 @@ class MenuServiceTest {
         assertTrue(outContent.toString().contains("Java"));
     }
 
+    @Test
+    void testStudentMenuInvalidChoiceWorks() {
+        user student = mock(user.class);
+        when(student.getRole()).thenReturn(Role.STUDENT);
+        when(student.getEmail()).thenReturn("s@test.com");
+
+        menuService menu = createMenu(
+                "9\n" +  // invalid
+                        "6\n"    // logout
+        );
+
+        menu.showRoleBasedMenu(student);
+
+        assertTrue(outContent.toString().contains("Invalid choice"));
+    }
+
+    @Test
+    void testStudentMenuLogoutOnly() {
+        user student = mock(user.class);
+        when(student.getRole()).thenReturn(Role.STUDENT);
+        when(student.getEmail()).thenReturn("s@test.com");
+
+        menuService menu = createMenu("6\n");
+
+        menu.showRoleBasedMenu(student);
+
+        assertTrue(outContent.toString().contains("Logging out"));
+    }
+
+    @Test
+    void testStudentBorrowBlockedByFineWorks() {
+        user student = mock(user.class);
+        when(student.getRole()).thenReturn(Role.STUDENT);
+        when(student.getEmail()).thenReturn("s@test.com");
+
+        when(mockBorrowService.hasUnpaidFine("s@test.com")).thenReturn(true);
+
+        menuService menu = createMenu(
+                "3\n" +  // borrow
+                        "6\n"    // logout
+        );
+
+        menu.showRoleBasedMenu(student);
+
+        assertTrue(outContent.toString().contains("unpaid fines"));
+    }
+
+    @Test
+    void testStudentBorrowSuccessWorks() {
+        user student = mock(user.class);
+        when(student.getRole()).thenReturn(Role.STUDENT);
+        when(student.getEmail()).thenReturn("s@test.com");
+
+        when(mockBorrowService.hasUnpaidFine("s@test.com")).thenReturn(false);
+        when(mockBorrowService.borrowItem("s@test.com", 123)).thenReturn(true);
+
+        menuService menu = createMenu(
+                "3\n" +
+                        "123\n" +
+                        "6\n"
+        );
+
+        menu.showRoleBasedMenu(student);
+
+        assertTrue(outContent.toString().contains("Borrow successful"));
+    }
+
+    @Test
+    void testStudentBorrowInvalidISBNWorks() {
+        user student = mock(user.class);
+        when(student.getRole()).thenReturn(Role.STUDENT);
+        when(student.getEmail()).thenReturn("s@test.com");
+
+        when(mockBorrowService.hasUnpaidFine("s@test.com")).thenReturn(false);
+
+        menuService menu = createMenu(
+                "3\n" +
+                        "abc\n" +
+                        "6\n"
+        );
+
+        menu.showRoleBasedMenu(student);
+
+        assertTrue(outContent.toString().contains("ISBN must be a number"));
+    }
+
+    @Test
+    void testStudentReturnSuccessWorks() {
+        user student = mock(user.class);
+        when(student.getRole()).thenReturn(Role.STUDENT);
+        when(student.getEmail()).thenReturn("s@test.com");
+
+        when(mockBorrowService.hasUnpaidFine("s@test.com")).thenReturn(false);
+        when(mockBorrowService.returnItem("s@test.com", 111)).thenReturn(true);
+
+        menuService menu = createMenu(
+                "4\n" +
+                        "111\n" +
+                        "6\n"
+        );
+
+        menu.showRoleBasedMenu(student);
+
+        assertTrue(outContent.toString().contains("returned successfully"));
+    }
+
+    @Test
+    void testStudentPayFineZeroWorks() {
+        user student = mock(user.class);
+        when(student.getRole()).thenReturn(Role.STUDENT);
+        when(student.getEmail()).thenReturn("s@test.com");
+
+        when(mockBorrowService.getTotalFine("s@test.com")).thenReturn(0);
+
+        menuService menu = createMenu(
+                "5\n" +
+                        "6\n"
+        );
+
+        menu.showRoleBasedMenu(student);
+
+        assertTrue(outContent.toString().contains("no fines"));
+    }
+
+    @Test
+    void testStudentPayFineInvalidAmountWorks() {
+        user student = mock(user.class);
+        when(student.getRole()).thenReturn(Role.STUDENT);
+        when(student.getEmail()).thenReturn("s@test.com");
+
+        when(mockBorrowService.getTotalFine("s@test.com")).thenReturn(50);
+
+        menuService menu = createMenu(
+                "5\n" +
+                        "-10\n" +
+                        "6\n"
+        );
+
+        menu.showRoleBasedMenu(student);
+
+        assertTrue(outContent.toString().contains("Invalid amount"));
+    }
+
+
+
 }

@@ -98,4 +98,108 @@ class userServiceTest {
         assertEquals(2, result.size());
         verify(userRepository).findInactiveUsersSince(any());
     }
+
+    @Test
+    void registerUserEmailAlreadyUsedException() {
+        when(userRepository.findByEmail("a@test.com"))
+                .thenReturn(Optional.of(new user()));
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> userService.registerUser("a@test.com", "password123", "password123")
+        );
+
+        assertEquals("This email is already used.", ex.getMessage());
+        verify(userRepository, never()).save(any());
+        verify(emailService, never()).sendEmail(any(), any(), any());
+    }
+
+    @Test
+    void registerUserPasswordMismatchException() {
+        when(userRepository.findByEmail(anyString()))
+                .thenReturn(Optional.empty());
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> userService.registerUser("a@test.com", "password123", "password321")
+        );
+
+        assertEquals(
+                "Password must be at least 8 characters and match the confirmation.",
+                ex.getMessage()
+        );
+    }
+
+    @Test
+    void registerUserSaveFailsNoEmailSent() {
+        when(userRepository.findByEmail(anyString()))
+                .thenReturn(Optional.empty());
+        when(userRepository.save(any(user.class)))
+                .thenReturn(false);
+
+        boolean result = userService.registerUser(
+                "a@test.com",
+                "password123",
+                "password123"
+        );
+
+        assertFalse(result);
+        verify(emailService, never()).sendEmail(any(), any(), any());
+    }
+
+    @Test
+    void authenticateWrongPasswordException() {
+        user u = new user(
+                "a@test.com",
+                Role.STUDENT,
+                PasswordHasher.hashPassword("correctPass")
+        );
+
+        when(userRepository.findByEmail("a@test.com"))
+                .thenReturn(Optional.of(u));
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> userService.authenticate("a@test.com", "wrongPass")
+        );
+
+        assertEquals("Incorrect password.", ex.getMessage());
+    }
+
+    @Test
+    void authenticateUserNotFoundException() {
+        when(userRepository.findByEmail(anyString()))
+                .thenReturn(Optional.empty());
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> userService.authenticate("x@test.com", "pass")
+        );
+
+        assertEquals("No user found with this email.", ex.getMessage());
+    }
+
+    @Test
+    void removeInactiveUserSuccess() {
+        when(userRepository.softDeleteInactiveUser(anyString(), any()))
+                .thenReturn(true);
+
+        boolean result = userService.removeInactiveUser("a@test.com");
+
+        assertTrue(result);
+        verify(userRepository).softDeleteInactiveUser(anyString(), any());
+    }
+
+    @Test
+    void updateUserRoleSuccess() {
+        when(userRepository.updateRole("a@test.com", Role.ADMIN))
+                .thenReturn(true);
+
+        boolean result = userService.updateUserRole("a@test.com", Role.ADMIN);
+
+        assertTrue(result);
+        verify(userRepository).updateRole("a@test.com", Role.ADMIN);
+    }
+
+
 }

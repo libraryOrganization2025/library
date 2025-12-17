@@ -81,6 +81,10 @@ public class user {
         this.role = role;
     }
 
+    public user() {
+
+    }
+
     /** @return the user's email */
     public String getEmail() { return email; }
 
